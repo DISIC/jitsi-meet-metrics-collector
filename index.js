@@ -17,7 +17,7 @@ router.get('/getClient', function (req, res, next) {
         if (err) {
             next(err);
         } else {
-            console.log('monfichier.js Sent');
+            res.status(200).send();
         }
     });
 });
@@ -26,11 +26,8 @@ router.get('/getClient', function (req, res, next) {
 router.post('/push', async (req, res) => {
     let ts = Date.now(); //creating the timestamp juste before validation with Joi
     req.body.m.ts = ts;  // appending the timestamp to the m (metrics) variable of the object received
-    console.log("body", req.body)
     const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
     let formated_data = validation.value;
-    console.log("validation: ", validation)
-    console.log("formated_data", formated_data)
     if(validation.error){
         return res.status(400).send(validation.error.details);
     }else{

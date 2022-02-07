@@ -64,6 +64,7 @@ class jitsi_meet_data {
         return (sum/arr.length).toFixed(2);
     }
 
+    // calculates the average of 3 upcoming numbers and update them
     updateInt(data, elem) {
         if(!(this.avgIntData.hasOwnProperty(elem))){
             this.avgIntData[`${elem}`] = [];
@@ -146,8 +147,8 @@ function logger() {
     events.forEach(event => APP.conference._room.on(event, data => eventDispatcher(data, event)))
 }
 
+// it update stats every occured event (every 10 sec) and push them every 3 events (30 sec in our case)
 function eventDispatcher(data, event) {
-    
     if(pushCondition === 3){
         pushStats();
         pushCondition = 0;
@@ -165,16 +166,6 @@ function eventDispatcher(data, event) {
         updateStats(data);
         pushCondition++ ;
     }
-
-    // switch (event) {
-    //     case "cq.local_stats_updated":
-    //         console.log("event", data)
-    //         updateStats(data);
-    //         pushCondition++;
-    //         break;
-    //     default:
-    //         break;
-    // }
 }
 
 function collectBrowserInfos() {
@@ -184,6 +175,7 @@ function collectBrowserInfos() {
     jitsi_meet_buffer.update(os, "j_os");
 }
 
+// update stats receives data and update each corresponding parameter in the class
 function updateStats(stats) {
     if (stats.serverRegion) {
         jitsi_meet_buffer.updateStr(stats.serverRegion, "j_sr")
@@ -242,6 +234,7 @@ function updateStats(stats) {
     }
 }
 
+// format_data is function that format data received from jitsi-meet
 const format_data = (data) => {
     let formated_data = {
         u: {},
@@ -271,10 +264,9 @@ const format_data = (data) => {
     return {uid: data.uid, conf: data.conf, m: formated_data};
 }
 
+// pushStats is a function that push formated changed data to the specified url source
 function pushStats() {
     let update = jitsi_meet_buffer.get();
-    console.log("update: ", update);
-    console.log("format_data: ", format_data(update));
     if (Object.keys(update).length > 0) {
         update.uid = jitsi_meet_infos.uid;
         update.conf = jitsi_meet_infos.conf;
@@ -284,7 +276,6 @@ function pushStats() {
             body: JSON.stringify(format_data(update))
         }).catch((e) => {});
     }
-    // setTimeout(pushStats, pushInterval);
 }
 
 // https://gist.github.com/Fl0pZz/ade793a5cd082161cf94194467178033
