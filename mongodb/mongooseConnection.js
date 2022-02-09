@@ -9,7 +9,6 @@ module.exports = function(mongodb){
     };
     
     //MongoDB Connection
-    mongoose.set('useFindAndModify', false);
     var mongoURI = "mongodb://"+mongodb.host+":"+mongodb.port+"/"+mongodb.dbName;
     
     mongoose.connect(mongoURI, mongoOptions).then(
