@@ -1,5 +1,5 @@
 {
-  "name": "jitsi-meet-metrics-collector",
+  "name": "@apitech/jitsi-meet-metrics-collector",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,14 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
-    "url": "https://gitlab-forge.din.developpement-durable.gouv.fr/youssef.el-mkhantar/jitsi-meet-metrics-collector.git"
-  },
-  "author": "",
-  "license": "ISC",
+		"type": "git",
+		"url": "git+https://github.com/messagerie-melanie2/jitsi-meet-metrics-collector.git"
+	},
+  "author": "youssefelmkhantar",
+  "license": "EUPL-1.2",
   "dependencies": {
-    "@hapi/joi": "^17.1.1",
+    "@hapi/joi": "^17.1.1", 
     "express": "^4.17.2",
     "mongoose": "^6.2.0"
+  },
+  "private": false,
+  "publishConfig": {
+    "access": "public"
   }
 }

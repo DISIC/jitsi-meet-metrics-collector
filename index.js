@@ -5,7 +5,10 @@ var express = require('express');
 var router = express.Router();
 var path = require("path");
 const Joi = require('@hapi/joi');
-var metrics = require('./jmmcModel');
+
+
+var wrapper = function (routerConfig){
+    var metrics = require('./mongodb/jmmcModel')(routerConfig.mongodb);
 
 
 router.use(express.json()) 
@@ -215,5 +218,6 @@ const schema_validator = Joi.object({
         })
       
 })
-
-module.exports = router;
+    return router;
+}
+module.exports = wrapper;
