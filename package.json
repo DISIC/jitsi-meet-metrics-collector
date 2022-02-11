@@ -4,21 +4,29 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
-		"type": "git",
-		"url": "git+https://github.com/messagerie-melanie2/jitsi-meet-metrics-collector.git"
-	},
+    "type": "git",
+    "url": "git+https://github.com/messagerie-melanie2/jitsi-meet-metrics-collector.git"
+  },
   "author": "youssefelmkhantar",
   "license": "EUPL-1.2",
   "dependencies": {
-    "@hapi/joi": "^17.1.1", 
+    "@hapi/joi": "^17.1.1",
+    "chai-http": "^4.3.0",
     "express": "^4.17.2",
     "mongoose": "^5.13.9"
   },
   "private": false,
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "body-parser": "^1.19.1",
+    "chai": "^4.3.6",
+    "mocha": "^9.2.0",
+    "mongodb-memory-server": "^8.3.0",
+    "nock": "^13.2.4"
   }
 }

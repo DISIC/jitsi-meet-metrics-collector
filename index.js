@@ -32,7 +32,7 @@ router.post('/push', async (req, res) => {
     const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
     let formated_data = validation.value;
     if(validation.error){
-        return res.status(400).send(validation.error.details);
+        return res.status(401).send(validation.error.details);
     }else{
             await metrics.updateOne({"conf": formated_data["conf"]},
             [
