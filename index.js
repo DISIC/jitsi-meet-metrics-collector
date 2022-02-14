@@ -27,12 +27,12 @@ router.get('/getClient', function (req, res, next) {
 
 //route to which the client send metrics to be stored to mongodb
 router.post('/push', async (req, res) => {
-    let ts = Date.now(); //creating the timestamp juste before validation with Joi
+    let ts = Date.now(); //creating the timestamp just before validation with Joi
     req.body.m.ts = ts;  // appending the timestamp to the m (metrics) variable of the object received
     const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
     let formated_data = validation.value;
-    if(validation.error){
-        return res.status(401).send(validation.error.details);
+    if(validation.error || Object.keys(formated_data.m).length <= 1){
+        return res.status(401).send();
     }else{
             await metrics.updateOne({"conf": formated_data["conf"]},
             [
@@ -166,9 +166,22 @@ router.post('/push', async (req, res) => {
             ]
             ,{upsert: true}
         );
-           return res.status(200).send();
+           return res.status(200).send(formated_data);
     }
 });
+
+// router.get('/push', (req, res) => {
+//     metrics.create({conf: "test12345-"})
+
+            
+//             metrics.findOne({}).exec().then((data) => {
+//             console.log("findOne data: ", data);
+//             });
+            
+    
+    
+//     res.status(200).send()
+// })
 
 const schema_validator = Joi.object({
 
@@ -188,14 +201,14 @@ const schema_validator = Joi.object({
                         pl: Joi.number()
                     }),
 
-                    d: Joi.object({
+            d: Joi.object({
                         bw: Joi.number().optional().allow(null),
                         ab: Joi.number(),
                         vb: Joi.number(),
                         pl: Joi.number()
                     }),
 
-                    t: Joi.object({
+            t: Joi.object({
                         ip: Joi.string().ip({
                             version: [
                                 'ipv4',

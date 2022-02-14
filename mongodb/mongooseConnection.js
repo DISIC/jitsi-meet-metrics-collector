@@ -8,6 +8,14 @@ module.exports = function(mongodb){
         useUnifiedTopology: true
     };
     
+    console.log(mongoOptions)
+    if(mongoOptions.user === undefined && mongoOptions.pass === undefined){
+        mongoOptions = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
+    }
+    
     //MongoDB Connection
     var mongoURI = "mongodb://"+mongodb.host+":"+mongodb.port+"/"+mongodb.dbName;
     
