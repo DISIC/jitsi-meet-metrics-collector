@@ -1,11 +1,11 @@
-let staticId = localStorage.getItem("staticUserId");
+// TODO: Ajouter des commentaires avant chaque fonction
 
+let staticId = localStorage.getItem("staticUserId"); //TODO: remplacer le nom de la variable staticUserId par jmmc_staticUserId pour éviter la confusion avec d'autres scripts
 const url = "/jitsi-meet-metrics-collector/push";
-const events = [
+const events = [ //FIXME : remplacer le tableau par une variable string  car on a un seul evenement
     "cq.local_stats_updated",
 ];
-const pushInterval = 30000;
-let pushCondition = 0;
+let pushCondition = 0; //FIXME : mettre PUSHCONDITION sous forme de constante paramètrable égale à 3 par défaut
 const jitsi_meet_infos = {
     uid: getStaticId()
 }
@@ -29,9 +29,11 @@ class jitsi_meet_data {
         this.j_d_pl = 0; // download packet_loss
 
         this.j_t_ip = "0.0.0.0";  // transport ip
+        // FIXME : le port doit être au format numérique
         this.j_t_p = "0";           // transport port
         this.j_t_tp = "tcp";       // transport type
         this.j_t_lip = "0.0.0.0"; // transport local_ip
+        // FIXME : le port doit être au format numérique
         this.j_t_lp = "0";          // transport local_port
 
         this.j_v = {}; // video
@@ -116,6 +118,7 @@ class jitsi_meet_data {
         return data;
     }
 }
+
 let jitsi_meet_buffer = new jitsi_meet_data();
 
 startCollector();
@@ -148,15 +151,15 @@ function logger() {
 }
 
 // it update stats every occured event (every 10 sec) and push them every 3 events (30 sec in our case)
-function eventDispatcher(data, event) {
+function eventDispatcher(data, event) { //FIXME : changer le nom de cette fonction pour éviter les confusions
     if(pushCondition === 3){
         pushStats();
         pushCondition = 0;
     }
     
-    if (!data) return
+    if (!data) return //TODO : je n'ai pas compris cette ligne
 
-    try {
+    try { //FIXME : supprimer ce try catch s'il ne fait rien
         JSON.stringify(data)
     } catch (error) {
         return
@@ -264,7 +267,7 @@ const format_data = (data) => {
     return {uid: data.uid, conf: data.conf, m: formated_data};
 }
 
-// pushStats is a function that push formated changed data to the specified url source
+// pushStats is a function that pushes formated changed data to the specified url source
 function pushStats() {
     let update = jitsi_meet_buffer.get();
     if (Object.keys(update).length > 0) {
@@ -279,7 +282,7 @@ function pushStats() {
 }
 
 // https://gist.github.com/Fl0pZz/ade793a5cd082161cf94194467178033
-var BrowserDetect = {
+var BrowserDetect = { //TODO : Etudier l'existant pour savoir si c'est compatible avec tous les browsers + etudier la possibilité de le remplacer avec https://github.com/faisalman/ua-parser-js
     init: function (userAgent, appVersion) {
         this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
         this.version = this.searchVersion(userAgent) || this.searchVersion(appVersion) || "an unknown version";
@@ -386,4 +389,5 @@ var BrowserDetect = {
     }]
 
 };
+
 BrowserDetect.init(navigator.userAgent, navigator.appVersion);
