@@ -1,5 +1,5 @@
-module.exports = function(mongodb){
-    var mongoose = require('./mongooseConnection')(mongodb); //FIXME: le modèle ne doit pas initier la connexion. C'est plutôt le index.js qui devrait le faire.
+module.exports = function(mongooseConnection){
+    var mongoose = mongooseConnection; 
     var metricsSchema = mongoose.Schema(
         {
             conf: String,

@@ -1,11 +1,8 @@
-// TODO: Ajouter des commentaires avant chaque fonction
 
-let staticId = localStorage.getItem("staticUserId"); //TODO: remplacer le nom de la variable staticUserId par jmmc_staticUserId pour éviter la confusion avec d'autres scripts
+let staticId = localStorage.getItem("jmmc_staticUserId"); 
 const url = "/jitsi-meet-metrics-collector/push";
-const events = [ //FIXME : remplacer le tableau par une variable string  car on a un seul evenement
-    "cq.local_stats_updated",
-];
-let pushCondition = 0; //FIXME : mettre PUSHCONDITION sous forme de constante paramètrable égale à 3 par défaut
+let pushCount = 0; 
+const PUSHCONDITION = 3;
 const jitsi_meet_infos = {
     uid: getStaticId()
 }
@@ -29,11 +26,9 @@ class jitsi_meet_data {
         this.j_d_pl = 0; // download packet_loss
 
         this.j_t_ip = "0.0.0.0";  // transport ip
-        // FIXME : le port doit être au format numérique
         this.j_t_p = "0";           // transport port
         this.j_t_tp = "tcp";       // transport type
         this.j_t_lip = "0.0.0.0"; // transport local_ip
-        // FIXME : le port doit être au format numérique
         this.j_t_lp = "0";          // transport local_port
 
         this.j_v = {}; // video
@@ -122,14 +117,13 @@ class jitsi_meet_data {
 let jitsi_meet_buffer = new jitsi_meet_data();
 
 startCollector();
-// setTimeout(pushStats, 3000);
 
 function getStaticId() {
     if (!staticId) {
         // https://stackoverflow.com/a/2117523
         staticId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
-        localStorage.setItem('staticUserId', staticId);
+        localStorage.setItem('jmmc_staticUserId', staticId);
     }
     return staticId;
 }
@@ -146,28 +140,20 @@ function logger() {
 
     collectBrowserInfos();
     pushStats();
-
-    events.forEach(event => APP.conference._room.on(event, data => eventDispatcher(data, event)))
+    let event = "cq.local_stats_updated";
+    () => APP.conference._room.on(event, data => eventTriger(data, event));
 }
 
 // it update stats every occured event (every 10 sec) and push them every 3 events (30 sec in our case)
-function eventDispatcher(data, event) { //FIXME : changer le nom de cette fonction pour éviter les confusions
-    if(pushCondition === 3){
+function eventTriger(data, event) {
+    if(pushCount === PUSHCONDITION){
         pushStats();
-        pushCondition = 0;
-    }
-    
-    if (!data) return //TODO : je n'ai pas compris cette ligne
-
-    try { //FIXME : supprimer ce try catch s'il ne fait rien
-        JSON.stringify(data)
-    } catch (error) {
-        return
+        pushCount = 0;
     }
 
-    if(event === "cq.local_stats_updated"){
+    if(data && event === "cq.local_stats_updated"){
         updateStats(data);
-        pushCondition++ ;
+        pushCount++ ;
     }
 }
 
@@ -264,6 +250,16 @@ const format_data = (data) => {
             }
         }  
     }
+    if(formated_data.hasOwnProperty('t')){
+        if(formated_data.t.p){
+            let newP = parseInt(formated_data.t.p)
+            formated_data.t.p = newP
+        }
+        if(formated_data.t.lp){
+            let newLp = parseInt(formated_data.t.lp)
+            formated_data.t.lp = newLp
+        }
+    }
     return {uid: data.uid, conf: data.conf, m: formated_data};
 }
 
@@ -282,10 +278,10 @@ function pushStats() {
 }
 
 // https://gist.github.com/Fl0pZz/ade793a5cd082161cf94194467178033
-var BrowserDetect = { //TODO : Etudier l'existant pour savoir si c'est compatible avec tous les browsers + etudier la possibilité de le remplacer avec https://github.com/faisalman/ua-parser-js
-    init: function (userAgent, appVersion) {
+var BrowserDetect = {
+    init: function (userAgent) {
         this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
-        this.version = this.searchVersion(userAgent) || this.searchVersion(appVersion) || "an unknown version";
+        this.version = this.searchVersion(userAgent) || "an unknown version";
         this.OS = this.searchString(this.dataOS) || "an unknown OS";
     },
     searchString: function (data) {
@@ -390,4 +386,4 @@ var BrowserDetect = { //TODO : Etudier l'existant pour savoir si c'est compatibl
 
 };
 
-BrowserDetect.init(navigator.userAgent, navigator.appVersion);
+BrowserDetect.init(navigator.userAgent);

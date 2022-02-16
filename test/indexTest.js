@@ -1,5 +1,5 @@
 const chai = require('chai');
-const server = require('.app/appTest');
+const server = require('./app/appTest');
 const chaiHttp = require('chai-http');
 const  should = chai.should();
 chai.use(chaiHttp);
@@ -37,7 +37,7 @@ describe('jmmc test', function(){
 
     it('it should POST 2 users in the conf with new session for each', (done) => {
         let data1 = {
-            conf: 'test12345',
+            conf: 'testconf12345',
             uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120002',
             m: {
                 br: "chrome 97",
@@ -45,7 +45,7 @@ describe('jmmc test', function(){
             }
         }
         let data2 = {
-            conf: 'test12345',
+            conf: 'testconf12345',
             uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120003',
             m: {
                 br: "chrome 97",
@@ -69,7 +69,7 @@ describe('jmmc test', function(){
 
     it("it should add for each user's current session an object of the new validated metrics", (done) => {
         let data1 = {
-            conf: 'test12345',
+            conf: 'testconf12345',
             uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120002',
             m: {
                 u:{
@@ -84,7 +84,7 @@ describe('jmmc test', function(){
             }
         }
         let data2 = {
-            conf: 'test12345',
+            conf: 'testconf12345',
             uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120003',
             m: {
                 u:{
@@ -115,7 +115,7 @@ describe('jmmc test', function(){
 
     it('it should not POST an empty metrics object', (done) => {
         let data = {
-            conf: 'test12345',
+            conf: 'testconf12345',
             uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120002',
             m: {
             }
@@ -125,7 +125,7 @@ describe('jmmc test', function(){
             .post('/push')
             .send(data)
             .end((err, res) => {
-                res.should.have.status(401);
+                res.should.have.status(400);
                 done();
             });
     });
@@ -143,7 +143,7 @@ describe('jmmc test', function(){
             .post('/push')
             .send(data)
             .end((err, res) => {
-                res.should.have.status(401);
+                res.should.have.status(400);
                 done();
             });
     });

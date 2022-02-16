@@ -6,13 +6,12 @@ var router = express.Router();
 var path = require("path");
 const Joi = require('@hapi/joi');
 
-//TODO: Ajouter un commentaire ici pour décrire ce que fait ce wrapper
+//wrapper is function that returns the route object configured with the passed params
 var wrapper = function (routerConfig){
 
-var metrics = require('./mongodb/jmmcModel')(routerConfig.mongodb);
+var mongooseConnection = require('./mongodb/mongooseConnection')(routerConfig.mongodb)
+var metrics = require('./mongodb/jmmcModel')(mongooseConnection);
 
-
-router.use(express.json()) //FIXME : est-ce néceassaire de le mettre ici ? ça fait pas doublon avec app.use dans appTest? 
 
 //route to send the javascript client file
 router.get('/getClient', function (req, res, next) {
@@ -20,21 +19,20 @@ router.get('/getClient', function (req, res, next) {
     res.sendFile(jmmc_client_path, function (err) {
         if (err) {
             next(err);
-        } else {
-            res.status(200).send(); //FIXME: le client reçoit le fichier mais l'application essaie de lui envoyer une réponse 200 après. Il ne faut pas faire de traitement après l'envoie du fichier
         }
     });
 });
 
 //route to which the client sends metrics to be stored in mongodb
 router.post('/push', async (req, res) => {
-    let ts = Date.now(); //creating the timestamp just before validation with Joi
-    //FIXME: ajouter un check pour savoir si "m" existe avant de lui donner ts 
-    req.body.m.ts = ts;  // appending the timestamp to the m (metrics) variable of the object received
+    let ts = new Date().getTime(); //creating the timestamp just before validation with Joi
+    if(req.body.m) {
+       req.body.m.ts = ts;  // appending the timestamp to the m (metrics) variable of the object received 
+    }
     const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
     let formated_data = validation.value;
-    if(validation.error || Object.keys(formated_data.m).length <= 1){  //FIXME: pour la deuxième validation, il est possible d'ajouter joi.object({}).min(2); directement dans joi, ça évite de faire cette vérification. Il minimum deux objets dans m
-        return res.status(401).send();
+    if(validation.error){
+        return res.status(400).send(validation.error.details);
     }else{
             await metrics.updateOne({"conf": formated_data["conf"]},
             [
@@ -168,22 +166,23 @@ router.post('/push', async (req, res) => {
             ]
             ,{upsert: true}
         );
-           return res.status(200).send(formated_data);
+           return res.status(200).send();
     }
 });
 
-//TODO: ajouter un commentaire pour décrire ce que fait cet objet
+// validates the modified request body if it has the required form
 const schema_validator = Joi.object({
 
         uid: Joi.string().guid().required(),
-        conf: Joi.string().alphanum().required(), //TODO: à faire plus tard => il faut que le nom de la conf respecte la regex
+        conf: Joi.string().pattern(new RegExp('^(?=(?:[a-zA-Z0-9]*[a-zA-Z]))(?=(?:[a-zA-Z0-9]*[0-9]){3})[a-zA-Z0-9]{10,}$')).required()
+        ,
 
         m: Joi.object({
             br: Joi.string(),  // browser_name
             os: Joi.string(), // operating_system
 
-            sr: Joi.string().valid("MTE", "RIE", "RIE-EXT", "INTERNET", "INTERNET-RIE"), // server_region //TODO : à rendre paramètrable via la config
-            cq: Joi.number(), // connection_quality //TODO : ajouter entre 0 et 100
+            sr: Joi.string().valid(...routerConfig.authorizedRegions), // server_region
+            cq: Joi.number().min(0).max(100), // connection_quality
             u: Joi.object({
                         bw: Joi.number(),
                         ab: Joi.number(),
@@ -200,26 +199,19 @@ const schema_validator = Joi.object({
 
             t: Joi.object({
                         ip: Joi.string().ip({
-                            version: [
-                                'ipv4',
-                                'ipv6' //FIXME: pas la peine d'avoir ipv6 car on n'en fait pas ou bien le rendre configurable
-                            ],
-                            cidr: 'optional' //FIXME: il ne faut pas accepter le format cidr
+                            version: ['ipv4'],                            
+                            cidr: 'forbidden' 
                         }),
-                        p: Joi.string(), //FIXME: le port doit être number
+                        p: Joi.number(), 
                         tp: Joi.string().valid('tcp', 'udp'),
                         lip: Joi.string().ip({
-                            version: [
-                                'ipv4',
-                                'ipv6'//FIXME: pas la peine d'avoir ipv6 car on n'en fait pas ou bien le rendre configurable
-                            ],
-                            cidr: 'optional' //FIXME: il ne faut pas accepter le format cidr
+                            version: ['ipv4'],                          
+                            cidr: 'forbidden' 
                         }),
-                        lp: Joi.string() //FIXME: local IP doit être un number
+                        lp: Joi.number() 
                 }),
-            ts: Joi.date().timestamp().required() //FIXME : remplacer par number
-        })
-      
+            ts: Joi.number().required()
+        }).min(2) 
 })
     return router;
 }

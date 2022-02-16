@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 
 module.exports = function(mongodb){
-    //TODO : je pense qu'il y a des choses à améliorer/optimiser ici. je rédigerai un commentaire plus tard
     var mongoOptions={
         user:mongodb.user,
         pass:mongodb.password,
