@@ -16,26 +16,24 @@ describe('jmmc test', function(){
             });
     }).timeout(10000);
 
-    // ca ne doit pas ajouter une session si on l'envoi pas le param br
-    // it('it should not POST an empty metrics object', (done) => {
-    //     let data = {
-    //         conf: 'test12345',
-    //         uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120002',
-    //         m: {
-    //             cq: 100
-    //         }
-    //     }
+    it('it should not POST an empty metrics object', (done) => {
+        let data = {
+            conf: 'testconf12345',
+            uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120002',
+            m: {
+            }
+        }
         
-    //     chai.request(server)
-    //         .post('/push')
-    //         .send(data)
-    //         .end((err, res) => {
-    //             res.should.have.status(401);
-    //             done();
-    //         });
-    // });
+        chai.request(server)
+            .post('/push')
+            .send(data)
+            .end((err, res) => {
+                res.should.have.status(400);
+                done();
+            });
+    });
 
-    it('it should POST 2 users in the conf with new session for each', (done) => {
+    it('it should POST 2 users in the conf with new session for each if the metrics object has the "br" variable', (done) => {
         let data1 = {
             conf: 'testconf12345',
             uid: 'a40bcaa8-8b36-11ec-a8a3-0242ac120002',
@@ -79,7 +77,7 @@ describe('jmmc test', function(){
                     bw: 600
                 },
                 t:{
-                    p: "80"
+                    p: 80
                 }
             }
         }
@@ -94,7 +92,7 @@ describe('jmmc test', function(){
                     bw: 600
                 },
                 t:{
-                    p: "80"
+                    p: 80
                 }
             }
         }
