@@ -25,7 +25,7 @@ router.get('/getClient', function (req, res, next) {
 
 //route to which the client sends metrics to be stored in mongodb
 router.post('/push', async (req, res) => {
-    let ts = new Date().getTime(); //creating the timestamp just before validation with Joi
+    let ts =  Math.floor(Date.now() / 1000); //creating the timestamp just before validation with Joi
     if(req.body.m) {
        req.body.m.ts = ts;  // appending the timestamp to the m (metrics) variable of the object received 
     }
