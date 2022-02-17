@@ -4,7 +4,6 @@ const chaiHttp = require('chai-http');
 const  should = chai.should();
 chai.use(chaiHttp);
 
-console.log("index test")
 describe('jmmc test', function(){
 
     it('It should return a javascript file', (done) => {

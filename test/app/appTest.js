@@ -6,7 +6,6 @@ var jitsiMeetMetricsCollector = require('../../index');
 var MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer;
 
 const mongod = async () => {
-    console.log("mongod")
     return await MongoMemoryServer.create({
         instance:{
           port: 27017,
@@ -15,9 +14,7 @@ const mongod = async () => {
         }
     });}
 
-mongod().then((data) => 
-console.log(data)
-);
+mongod();
 
 const config = {
     mongodb: { 

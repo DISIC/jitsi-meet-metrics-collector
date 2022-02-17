@@ -8,7 +8,6 @@ module.exports = function(mongodb){
         useUnifiedTopology: true
     };
     
-    console.log(mongoOptions)
     if(mongoOptions.user === undefined && mongoOptions.pass === undefined){
         mongoOptions = {
             useNewUrlParser: true,
