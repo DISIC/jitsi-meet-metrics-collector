@@ -1,6 +1,9 @@
 
 let staticId = localStorage.getItem("jmmc_staticUserId"); 
 const url = "/jitsi-meet-metrics-collector/push";
+const events = [
+    "cq.local_stats_updated",
+];
 let pushCount = 0; 
 const PUSHCONDITION = 3;
 const jitsi_meet_infos = {
@@ -140,8 +143,7 @@ function logger() {
 
     collectBrowserInfos();
     pushStats();
-    let event = "cq.local_stats_updated";
-    () => APP.conference._room.on(event, data => eventTriger(data, event));
+    events.forEach(event => APP.conference._room.on(event, data => eventTriger(data, event)))
 }
 
 // it update stats every occured event (every 10 sec) and push them every 3 events (30 sec in our case)
