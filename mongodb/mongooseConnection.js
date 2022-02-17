@@ -8,7 +8,6 @@ module.exports = function(mongodb){
         useUnifiedTopology: true
     };
     
-    console.log(mongoOptions)
     if(mongoOptions.user === undefined && mongoOptions.pass === undefined){
         mongoOptions = {
             useNewUrlParser: true,
@@ -21,11 +20,11 @@ module.exports = function(mongodb){
     
     mongoose.connect(mongoURI, mongoOptions).then(
         () => {
-            console.log("Connecté à MongoDB : " + mongoURI);
+            console.log("jitsi-meet-metrics-collector is connected to MongoDB : " + mongoURI);
         },
         (err) => {
-            console.log("Erreur de conenxion à MongoDB: " + mongoURI);
-            console.log("L'application va s'arrêter");
+            console.log("jitsi-meet-metrics-collector Mongodb connection error: " + mongoURI);
+            console.log("jitsi-meet-metrics-collector is going to stop");
         }
     );
     return mongoose;
