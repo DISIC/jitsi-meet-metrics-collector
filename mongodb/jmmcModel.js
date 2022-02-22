@@ -3,9 +3,10 @@ module.exports = function(mongooseConnection){
     var metricsSchema = mongoose.Schema(
         {
             conf: String,
-            users: Array
+            uid: String,
+            metrics: Array
         },
-        {collection :'metrics-collector'}
+        {collection :'metrics-collector', versionKey: false}
     );
     return mongoose.model('metrics-collector', metricsSchema);
 }

@@ -32,141 +32,28 @@ router.post('/push', async (req, res) => {
     const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
     let formated_data = validation.value;
     if(validation.error){
-        return res.status(400).send(validation.error.details);
-    }else{
-            await metrics.updateOne({"conf": formated_data["conf"]},
-            [
-                {
-                    "$set": {
-                        "uid": formated_data["uid"],
-                        "umetrics": formated_data["m"]
-                    }
-                },
-                {
-                    "$set": {
-                        "new-user": {
-                            "$eq": [
-                                {
-                                    "$filter": {
-                                        "input": {
-                                            "$cond": [
-                                                "$users",
-                                                "$users",
-                                                []
-                                            ]
-                                        },
-                                        "as": "u",
-                                        "cond": {
-                                            "$eq": [
-                                                "$$u.uid",
-                                                "$uid"
-                                            ]
-                                        }
-                                    }
-                                },
-                                []
-                            ]
-                        }
-                    }
-                },
-                {
-                    "$set": {
-                        "users": {
-                            "$cond": [
-                                "$new-user",
-                                {
-                                    "$concatArrays": [
-                                        {
-                                            "$cond": [
-                                                {"$isArray": ["$users"]},
-                                                "$users",
-                                                []
-                                            ]
-                                        },
-                                        [
-                                            {
-                                                "uid": "$uid",
-                                                "sessions": [["$umetrics"]]
-                                            }
-                                        ]
-                                    ]
-                                },
-                                {
-                                    "$map": {
-                                        "input": "$users",
-                                        "as": "u",
-                                        "in": {
-                                            "$cond": [
-                                                {
-                                                    "$eq": ["$$u.uid", "$uid"]
-                                                },
-                                                {
-                                                    "$mergeObjects": [
-                                                        "$$u",
-                                                        {
-                                                            "sessions": {
-                                                                "$cond": [
-                                                                    {
-                                                                        "$eq": [
-                                                                            {
-                                                                                "$type": "$umetrics.br"
-                                                                            },
-                                                                            "string"
-                                                                        ]
-                                                                    },
-                                                                    {
-                                                                        "$concatArrays":
-                                                                            [
-                                                                                "$$u.sessions",[["$umetrics"]]
-                                                                            ]
-                                                                    },
-                                                                    {
-                                                                        "$concatArrays":
-                                                                            [
-                                                                                {
-                                                                                    "$slice": [
-                                                                                        "$$u.sessions",
-                                                                                        {
-                                                                                            "$subtract": [
-                                                                                                {"$size": "$$u.sessions"},
-                                                                                                1
-                                                                                            ]
-                                                                                        }
-                                                                                    ]
-                                                                                },
-                                                                                [
-                                                                                    {
-                                                                                        "$concatArrays":
-                                                                                            [
-                                                                                                {"$last": "$$u.sessions"},
-                                                                                                ["$umetrics"]
-                                                                                            ]
-                                                                                    }
-                                                                                ]
-                                                                            ]
-                                                                    }
-                                                                ]
-                                                            }
-                                                        }
-                                                    ]
-                                                },
-                                                "$$u"
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "$unset":
-                        ["uid", "umetrics", "new-user"]
-                }
-            ]
-            ,{upsert: true}
-        );
-           return res.status(200).send();
+        return res.status(400).send();
+    }
+    if(formated_data.m.br){
+        var newId = mongooseConnection.Types.ObjectId();
+        await metrics.create({
+            _id: newId,
+            conf: formated_data.conf,
+            uid: formated_data.uid,
+            metrics: [formated_data.m]
+        });
+        res.cookie('objectId', newId, {secure: true, httpOnly: true});
+        return res.status(200).send();
+    }
+    if(!req.cookies.ObjectId){
+        return res.status(400).send();
+    }
+    else{
+        await metrics.updateOne(
+            { _id: req.cookies.objectId},
+            { $push: { metrics: formated_data.m}}
+        )
+        return res.status(200).send();
     }
 });
 
@@ -174,8 +61,7 @@ router.post('/push', async (req, res) => {
 const schema_validator = Joi.object({
 
         uid: Joi.string().guid().required(),
-        conf: Joi.string().pattern(new RegExp('^(?=(?:[a-zA-Z0-9]*[a-zA-Z]))(?=(?:[a-zA-Z0-9]*[0-9]){3})[a-zA-Z0-9]{10,}$')).required()
-        ,
+        conf: Joi.string().pattern(new RegExp('^(?=(?:[a-zA-Z0-9]*[a-zA-Z]))(?=(?:[a-zA-Z0-9]*[0-9]){3})[a-zA-Z0-9]{10,}$')).required(),
 
         m: Joi.object({
             br: Joi.string(),  // browser_name
