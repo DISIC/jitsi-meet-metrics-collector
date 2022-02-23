@@ -45,15 +45,16 @@ router.post('/push', async (req, res) => {
         res.cookie('objectId', newId, {secure: true, httpOnly: true});
         return res.status(200).send();
     }
-    if(!req.cookies.ObjectId){
-        return res.status(400).send();
-    }
     else{
-        await metrics.updateOne(
-            { _id: req.cookies.objectId},
-            { $push: { metrics: formated_data.m}}
-        )
-        return res.status(200).send();
+        if(req.cookies.objectId){
+            await metrics.updateOne(
+                { _id: req.cookies.objectId},
+                { $push: { metrics: formated_data.m}}
+            )
+            return res.status(200).send();
+        }else{
+            return res.status(400).send()
+        }
     }
 });
 
