@@ -4,7 +4,7 @@ module.exports = function(mongooseConnection){
         {
             conf: String,
             uid: String,
-            metrics: Array //FIXME remplacer metrics par m
+            m: Array
         },
         {collection :'metrics-collector', versionKey: false}
     );
