@@ -10,7 +10,7 @@ const Joi = require('@hapi/joi');
 var wrapper = function (routerConfig){
 
 var mongooseConnection = require('./mongodb/mongooseConnection')(routerConfig.mongodb)
-var metrics = require('./mongodb/jmmcModel')(mongooseConnection); //FIXME le nom de la variable doit être un peu plus explicite
+var jmmcModel = require('./mongodb/jmmcModel')(mongooseConnection); 
 
 
 //route to send the javascript client file
@@ -25,44 +25,50 @@ router.get('/getClient', function (req, res, next) {
 
 //route to which the client sends metrics to be stored in mongodb
 router.post('/push', async (req, res) => {
-    //TODO: ajouter try catch 
-    let ts =  Math.floor(Date.now() / 1000); //creating the timestamp just before validation with Joi
-    if(req.body.m) { //FIXME améliorer cette condition en ajoutant else
-       req.body.m.ts = ts;  // appending the timestamp to the m (metrics) variable of the object received 
-    }
-    const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
-    let formated_data = validation.value;
-    //FIXME il faudra rendre ses conditions plus propores
-    if(validation.error){//FIXME ce test ne fonctionne pas quand on envoie un objet qui contient que conf et uid
-        return res.status(400).send();
-    }
-    if(formated_data.m.br){
-        var newId = mongooseConnection.Types.ObjectId();
-        await metrics.create({
-            _id: newId,
-            conf: formated_data.conf,
-            uid: formated_data.uid,
-            metrics: [formated_data.m]
-        });
-        //FIXME remplacer le nom du cookie par jmmc_sessionID pour éviter les confusions
-        //TODO rendre le cookie sécurisé avec le système de JWT
-        res.cookie('objectId', newId, {secure: true, httpOnly: true});
-
-        //TODO c'est plus propre de renvoyer l'objet que tu as reçu et pas une réponse vide + c'est utile pour les tests unitaires
-        return res.status(200).send();
-    }
-    else{
-        if(req.cookies.objectId){ //TODO: effectuer une vérification de sécurité de l'objectId (avec JWT?)
-            await metrics.updateOne(
-                { _id: req.cookies.objectId},
-                { $push: { metrics: formated_data.m}}
-            )
-            
-            return res.status(200).send(); //TODO c'est plus propre de renvoyer l'objet que tu as reçu et pas une réponse vide + c'est utile pour les tests unitaires
+    try {
+        if(req.body.m) {
+            req.body.m.ts = Math.floor(Date.now() / 1000); ;  // appending the timestamp to the m (metrics) variable of the object received
+            const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
+            let formated_data = validation.value;
+            // tests for eventual validation errors
+            if(validation.error){
+                return res.status(400).send("valition error ");
+            }
+            // tests for the existance of the br variable
+            if(formated_data.m.br){
+                var newId = mongooseConnection.Types.ObjectId();
+                await jmmcModel.create({
+                    _id: newId,
+                    conf: formated_data.conf,
+                    uid: formated_data.uid,
+                    m: [formated_data.m]
+                });
+                //TODO rendre le cookie sécurisé avec le système de JWT cookie session
+                res.cookie('jmmc_objectId', newId, {secure: true, httpOnly: true});
+    
+                return res.status(200).send(validation.value);
+            }
+            else{
+                if(req.cookies.jmmc_objectId){ //TODO: effectuer une vérification de sécurité de l'objectId (avec JWT?)
+                    await jmmcModel.updateOne(
+                        { _id: req.cookies.jmmc_objectId},
+                        { $push: { m: formated_data.m}}
+                    )
+                    
+                    return res.status(200).send(validation.value); 
+                }else{
+                    return res.status(400).send("invalid jmmc_objectId"); 
+                }
+            }
         }else{
-            return res.status(400).send(); //TODO c'est plus propre d'envoyer des messages d'erreur
+            return res.status(400).send("must contains the m variable");
         }
-    }
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("something bad happened");
+    } 
+    
+    
 });
 
 // validates the modified request body if it has the required form
@@ -105,7 +111,7 @@ const schema_validator = Joi.object({
                         lp: Joi.number() 
                 }),
             ts: Joi.number().required()
-        }).min(2) 
+        }).min(2).required() 
 })
     return router;
 }
