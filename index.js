@@ -9,12 +9,12 @@ const Joi = require('@hapi/joi');
 //wrapper is function that returns the route object configured with the passed params
 var wrapper = function (routerConfig){
 
-var mongooseConnection = require('./mongodb/mongooseConnection')(routerConfig.mongodb)
-var jmmcModel = require('./mongodb/jmmcModel')(mongooseConnection); 
-
+//var mongooseConnection = require('./mongodb/mongooseConnection')(routerConfig.mongodb)
+var jmmcModel = require('./mongodb/jmmcModel')(routerConfig.mongoose); 
 
 //route to send the javascript client file
 router.get('/getClient', function (req, res, next) {
+    var myTest = req.app.get('db');
     let jmmc_client_path = path.join(__dirname, 'public')+"/jmmc_client.js";
     res.sendFile(jmmc_client_path, function (err) {
         if (err) {
@@ -36,7 +36,7 @@ router.post('/push', async (req, res) => {
             }
             // tests for the existance of the br variable
             if(formated_data.m.br){
-                var newId = mongooseConnection.Types.ObjectId();
+                var newId = routerConfig.mongoose.Types.ObjectId();
                 await jmmcModel.create({
                     _id: newId,
                     conf: formated_data.conf,
