@@ -1,78 +1,13 @@
 'use strict';
-
 //modules
-var express = require('express');
-var router = express.Router();
 var path = require("path");
 const Joi = require('@hapi/joi');
+
 
 //wrapper is function that returns the route object configured with the passed params
 var wrapper = function (routerConfig){
 
-//var mongooseConnection = require('./mongodb/mongooseConnection')(routerConfig.mongodb)
-var jmmcModel = require('./mongodb/jmmcModel')(routerConfig.mongoose); 
-
-//route to send the javascript client file
-router.get('/getClient', function (req, res, next) {
-    var myTest = req.app.get('db');
-    let jmmc_client_path = path.join(__dirname, 'public')+"/jmmc_client.js";
-    res.sendFile(jmmc_client_path, function (err) {
-        if (err) {
-            next(err);
-        }
-    });
-});
-
-//route to which the client sends metrics to be stored in mongodb
-router.post('/push', async (req, res) => {
-    try {
-        if(req.body.m) {
-            req.body.m.ts = Math.floor(Date.now() / 1000); ;  // appending the timestamp to the m (metrics) variable of the object received
-            const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
-            let formated_data = validation.value;
-            // tests for eventual validation errors
-            if(validation.error){
-                return res.status(400).send("valition error ");
-            }
-            // tests for the existance of the br variable
-            if(formated_data.m.br){
-                var newId = routerConfig.mongoose.Types.ObjectId();
-                await jmmcModel.create({
-                    _id: newId,
-                    conf: formated_data.conf,
-                    uid: formated_data.uid,
-                    m: [formated_data.m]
-                });
-                //TODO rendre le cookie sécurisé avec le système de JWT cookie session
-                res.cookie('jmmc_objectId', newId, {secure: true, httpOnly: true});
-    
-                return res.status(200).send(validation.value);
-            }
-            else{
-                if(req.cookies.jmmc_objectId){ //TODO: effectuer une vérification de sécurité de l'objectId (avec JWT?)
-                    await jmmcModel.updateOne(
-                        { _id: req.cookies.jmmc_objectId},
-                        { $push: { m: formated_data.m}}
-                    )
-                    
-                    return res.status(200).send(validation.value); 
-                }else{
-                    return res.status(400).send("invalid jmmc_objectId"); 
-                }
-            }
-        }else{
-            return res.status(400).send("must contains the m variable");
-        }
-    } catch (error) {
-        console.log(error)
-        res.status(500).send("something bad happened");
-    } 
-    
-    
-});
-
-// validates the modified request body if it has the required form
-const schema_validator = Joi.object({
+    const schema_validator = Joi.object({
 
         uid: Joi.string().guid().required(),
         conf: Joi.string().pattern(new RegExp('^(?=(?:[a-zA-Z0-9]*[a-zA-Z]))(?=(?:[a-zA-Z0-9]*[0-9]){3})[a-zA-Z0-9]{10,}$')).required(),
@@ -112,8 +47,76 @@ const schema_validator = Joi.object({
                 }),
             ts: Joi.number().required()
         }).min(2).required() 
-})
-    return router;
+    })
+
+    var mongoose = routerConfig.mongoose;
+    var metricsSchema = mongoose.Schema(
+        {
+            conf: String,
+            uid: String,
+            m: Array
+        },
+        {collection :'metrics-collector', versionKey: false}
+    );
+    var jmmcModel =  mongoose.model('metrics-collector', metricsSchema); 
+
+    return async function jmmc (req, res, next){
+        console.log(req.url)
+        if( req.url === "/getClient"){
+            let jmmc_client_path = path.join(__dirname, 'public')+"/jmmc_client.js";
+            res.sendFile(jmmc_client_path, function (err) {
+                if (err) {
+                    next(err);
+                }
+            }
+            );
+        }
+        if( req.url === "/push"){
+            try {
+                if(req.body.m) {
+                    req.body.m.ts = Math.floor(Date.now() / 1000); ;  // appending the timestamp to the m (metrics) variable of the object received
+                    const validation = schema_validator.validate(req.body); // validation receives an object that has value and error (in case of an error)
+                    let formated_data = validation.value;
+                    // tests for eventual validation errors
+                    if(validation.error){
+                        return res.status(400).send("valition error ");
+                    }
+                    // tests for the existance of the br variable
+                    if(formated_data.m.br){
+                        var newId = routerConfig.mongoose.Types.ObjectId();
+                        await jmmcModel.create({
+                            _id: newId,
+                            conf: formated_data.conf,
+                            uid: formated_data.uid,
+                            m: [formated_data.m]
+                        });
+                        //TODO rendre le cookie sécurisé avec le système de JWT cookie session
+                        res.cookie('jmmc_objectId', newId, {secure: true, httpOnly: true});
+            
+                        return res.status(200).send(validation.value);
+                    }
+                    else{
+                        if(req.cookies.jmmc_objectId){ //TODO: effectuer une vérification de sécurité de l'objectId (avec JWT?)
+                            await jmmcModel.updateOne(
+                                { _id: req.cookies.jmmc_objectId},
+                                { $push: { m: formated_data.m}}
+                            )
+                            
+                            return res.status(200).send(validation.value); 
+                        }else{
+                            return res.status(400).send("invalid jmmc_objectId"); 
+                        }
+                    }
+                    }else{
+                        return res.status(400).send("must contains the m variable");
+                    }
+            }catch (error) {
+                console.log(error)
+                res.status(500).send("something bad happened");
+            }
+        }
+    }
+
 }
 
 module.exports = wrapper;
