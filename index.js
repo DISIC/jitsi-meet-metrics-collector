@@ -90,15 +90,15 @@ var wrapper = function (routerConfig){
                             uid: formated_data.uid,
                             m: [formated_data.m]
                         });
-                        //TODO rendre le cookie sécurisé avec le système de JWT cookie session
-                        res.cookie('jmmc_objectId', newId, {secure: true, httpOnly: true});
+                        //the cookie is signed with a secret
+                        res.cookie('jmmc_objectId', newId, {secure: true, signed: true, httpOnly: true});
             
                         return res.status(200).send(validation.value);
                     }
                     else{
-                        if(req.cookies.jmmc_objectId){ //TODO: effectuer une vérification de sécurité de l'objectId (avec JWT?)
+                        if(req.signedCookies["jmmc_objectId"]){ 
                             await jmmcModel.updateOne(
-                                { _id: req.cookies.jmmc_objectId},
+                                { _id: req.signedCookies["jmmc_objectId"]},
                                 { $push: { m: formated_data.m}}
                             )
                             
