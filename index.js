@@ -1,77 +1,18 @@
 'use strict';
 //modules
 var path = require("path");
-const Joi = require('@hapi/joi');
+var validator = require("./validator/schema_validator");
+var jmmcModel_initializer = require("./schema/jmmcModel_intializer");
 
 
 //wrapper is function that returns the route object configured with the passed params
-var wrapper = function (routerConfig){
+var wrapper = function (config){
 
-    const schema_validator = Joi.object({
-
-        uid: Joi.string().guid().required(),
-        conf: Joi.string().pattern(new RegExp('^(?=(?:[a-zA-Z0-9]*[a-zA-Z]))(?=(?:[a-zA-Z0-9]*[0-9]){3})[a-zA-Z0-9]{10,}$')).required(),
-
-        m: Joi.object({
-            br: Joi.string(),  // browser_name
-            os: Joi.string(), // operating_system
-
-            sr: Joi.string().valid(...routerConfig.authorizedRegions), // server_region
-            cq: Joi.number().min(0).max(100), // connection_quality
-            u: Joi.object({ //TODO : ajouter des commentaires pour TOUTES les métriques (commme les métriques ci-dessous)
-                        bw: Joi.number(),
-                        ab: Joi.number(),
-                        vb: Joi.number(),
-                        pl: Joi.number()
-                    }),
-
-            d: Joi.object({
-                        bw: Joi.number().optional().allow(null),
-                        ab: Joi.number(),
-                        vb: Joi.number(),
-                        pl: Joi.number()
-                    }),
-
-            t: Joi.object({
-                        ip: Joi.string().ip({
-                            version: ['ipv4'],                            
-                            cidr: 'forbidden' 
-                        }),
-                        p: Joi.number(), 
-                        tp: Joi.string().valid('tcp', 'udp'),
-                        lip: Joi.string().ip({
-                            version: ['ipv4'],                          
-                            cidr: 'forbidden' 
-                        }),
-                        lp: Joi.number() 
-                }),
-            ts: Joi.number().required()
-        }).min(2).required() 
-    })
-
-    var mongoose = routerConfig.mongoose;
-    var metricsSchema = mongoose.Schema(
-        {
-            conf: String,
-            uid: String,
-            m: Array
-        },
-        {collection :'metrics-collector', versionKey: false}
-    );
-    var jmmcModel =  mongoose.model('metrics-collector', metricsSchema); 
+    var schema_validator = validator({authorizedRegions: config.authorizedRegions, confPattern: config.confPattern});
+    var jmmcModel = jmmcModel_initializer({Mongoose: config.mongoose, collection: config.jmmcCollection});
 
     return async function jmmc (req, res, next){
-        console.log(req.url)
-        if( req.url === "/getClient"){
-            let jmmc_client_path = path.join(__dirname, 'public')+"/jmmc_client.js";
-            res.sendFile(jmmc_client_path, function (err) {
-                if (err) {
-                    next(err);
-                }
-            }
-            );
-        }
-        if( req.url === "/push"){
+        if( req.url === "/push" && req.method === 'POST'){
             try {
                 if(req.body.m) {
                     req.body.m.ts = Math.floor(Date.now() / 1000); ;  // appending the timestamp to the m (metrics) variable of the object received
@@ -83,7 +24,7 @@ var wrapper = function (routerConfig){
                     }
                     // tests for the existance of the br variable
                     if(formated_data.m.br){
-                        var newId = routerConfig.mongoose.Types.ObjectId();
+                        var newId = config.mongoose.Types.ObjectId();
                         await jmmcModel.create({
                             _id: newId,
                             conf: formated_data.conf,
@@ -112,8 +53,18 @@ var wrapper = function (routerConfig){
                     }
             }catch (error) {
                 console.log(error)
-                res.status(500).send("something bad happened");
+                return res.status(500).send("something bad happened");
             }
+        }else if( req.url === "/getClient" && req.method === 'GET'){
+                let jmmc_client_path = path.join(__dirname, 'public')+"/jmmc_client.js";
+                return res.sendFile(jmmc_client_path, function (err) {
+                        if (err) {
+                            next(err);
+                        }
+                    }
+                );
+        }else{
+            return res.status(400).send("invalid url");
         }
     }
 
