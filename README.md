@@ -6,13 +6,10 @@ how to use it:
     simply install it with "npm install @apitech/jitsi-meet-metrics-collector"
     use the middleware in your root app folder by using : app.use(your base url, require('@apitech/jitsi-meet-metrics-collector')(config));
     the config object must contain a mongodb object with this format : 
-    mongodb: 
-        {
-            host: '127.0.0.1 for localhost or ',
-            port: 27017, 
-            dbName: 'your database name',
-            user: 'username'
-            pass:   'password'
-        }
-
+    {
+    mongoose: mongoose //the mongoose object must be connected already in the application,
+    confPattern: new RegExp('your regexp string here'),
+    authorizedRegions: array of strings of the authorized regions,
+    jmmcCollection: the name of your collection of type string
+    }
     
