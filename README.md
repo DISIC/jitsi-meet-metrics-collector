@@ -10,6 +10,6 @@ how to use it:
     mongoose: mongoose //the mongoose object must be connected already in the application,
     confPattern: new RegExp('your regexp string here'),
     authorizedRegions: array of strings of the authorized regions,
-    jmmcCollection: the name of your collection of type string
+    jmmcCollection: the name of your collection of type string,
     }
     
