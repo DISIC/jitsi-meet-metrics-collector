@@ -7,10 +7,10 @@ const jmmcModel_initializer = (config) => {
             uid: String,
             m: Array
         },
-        {collection :config.collection, versionKey: false}
+        {collection :config.jmmcCollection, versionKey: false}
     );
 
-    return mongoose.model('metrics-collector', metricsSchema);
+    return mongoose.model(config.jmmcCollection, metricsSchema);
 }
 
 module.exports = jmmcModel_initializer;

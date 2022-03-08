@@ -9,7 +9,7 @@ var jmmcModel_initializer = require("./schema/jmmcModel_intializer");
 var wrapper = function (config){
 
     var schema_validator = validator({authorizedRegions: config.authorizedRegions, confPattern: config.confPattern});
-    var jmmcModel = jmmcModel_initializer({Mongoose: config.mongoose, collection: config.jmmcCollection});
+    var jmmcModel = jmmcModel_initializer({Mongoose: config.mongoose, jmmcCollection: config.jmmcCollection});
 
     return async function jmmc (req, res, next){
         if( req.url === "/push" && req.method === 'POST'){
@@ -22,7 +22,7 @@ var wrapper = function (config){
                     if(validation.error){
                         return res.status(400).send("valition error ");
                     }
-                    // tests for the existance of the br variable
+                    // tests for the existence of the br variable. If true it means new sessions
                     if(formated_data.m.br){
                         var newId = config.mongoose.Types.ObjectId();
                         await jmmcModel.create({
