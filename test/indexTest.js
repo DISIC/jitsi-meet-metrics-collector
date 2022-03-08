@@ -4,6 +4,8 @@ const chaiHttp = require('chai-http');
 const  should = chai.should();
 chai.use(chaiHttp);
 
+//FIXME le test unitaire doit être refait
+
 describe('jmmc test', function(){
 
     it('It should return a javascript file', (done) => {
