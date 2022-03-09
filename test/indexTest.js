@@ -34,6 +34,7 @@ describe('jmmc test', function(){
             });
     });
 
+    let cookie = '';
     it('it should POST 2 users in the conf with new session for each if the metrics object has the "br" variable', (done) => {
         let data1 = {
             conf: 'testconf12345',
@@ -59,6 +60,7 @@ describe('jmmc test', function(){
                 .post('/push')
                 .send(data2)
                 .end((err, res) => {
+                    cookie = res.header['set-cookie'][0].split('=')[1].split(';')[0];
                     res.should.have.status(200);
                     res.body.should.be.a('object');
                     done();
@@ -99,10 +101,12 @@ describe('jmmc test', function(){
         }
         chai.request(server)
           .post('/push')
+          .set('Cookie', 'jmmc_objectId='+cookie)
           .send(data1)
           .end((err, res) => {
                 chai.request(server)
                 .post('/push')
+                .set('Cookie', 'jmmc_objectId='+cookie)
                 .send(data2)
                 .end((err, res) => {
                     res.should.have.status(200);
