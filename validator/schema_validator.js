@@ -12,34 +12,34 @@ const validator = (validatorConfig) => {
 
             sr: Joi.string().valid(...validatorConfig.authorizedRegions), // server_region
             cq: Joi.number().min(0).max(100), // connection_quality
-            u: Joi.object({ //TODO : ajouter des commentaires pour TOUTES les métriques (commme les métriques ci-dessous)
-                        bw: Joi.number(),
-                        ab: Joi.number(),
-                        vb: Joi.number(),
-                        pl: Joi.number()
+            u: Joi.object({ 
+                        bw: Joi.number(),   // upload bandwidth
+                        ab: Joi.number(),   // upload audio_bitrate
+                        vb: Joi.number(),   // upload video_bitrate
+                        pl: Joi.number()    // upload packet_loss
                     }),
 
             d: Joi.object({
-                        bw: Joi.number().optional().allow(null),
-                        ab: Joi.number(),
-                        vb: Joi.number(),
-                        pl: Joi.number()
+                        bw: Joi.number().optional().allow(null), // download bandwidth
+                        ab: Joi.number(),   // download audio_bitrate
+                        vb: Joi.number(),   // download video_bitrate
+                        pl: Joi.number()    // download packet_loss
                     }),
 
             t: Joi.object({
-                        ip: Joi.string().ip({
+                        ip: Joi.string().ip({       // transport ip
                             version: ['ipv4'],                            
                             cidr: 'forbidden' 
-                        }),
-                        p: Joi.number(), 
-                        tp: Joi.string().valid('tcp', 'udp'),
-                        lip: Joi.string().ip({
+                        }), 
+                        p: Joi.number(),            // transport port
+                        tp: Joi.string().valid('tcp', 'udp'), // transport type
+                        lip: Joi.string().ip({                  // transport local_ip
                             version: ['ipv4'],                          
                             cidr: 'forbidden' 
                         }),
-                        lp: Joi.number() 
+                        lp: Joi.number()                        // transport local_port
                 }),
-            ts: Joi.number().required()
+            ts: Joi.number().required()                         // timestamp
         }).min(2).required() 
     });
 
