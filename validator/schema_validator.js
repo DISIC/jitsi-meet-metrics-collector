@@ -7,42 +7,59 @@ const validator = (validatorConfig) => {
         conf: Joi.string().pattern(validatorConfig.confPattern).required(),
 
         m: Joi.object({
-            br: Joi.string(),  // browser_name
-            os: Joi.string(), // operating_system
-
-            sr: Joi.string().valid(...validatorConfig.authorizedRegions), // server_region
-            cq: Joi.number().min(0).max(100), // connection_quality
-            u: Joi.object({ 
-                        bw: Joi.number(),   // upload bandwidth
-                        ab: Joi.number(),   // upload audio_bitrate
-                        vb: Joi.number(),   // upload video_bitrate
-                        pl: Joi.number()    // upload packet_loss
-                    }),
-
-            d: Joi.object({
-                        bw: Joi.number().optional().allow(null), // download bandwidth
-                        ab: Joi.number(),   // download audio_bitrate
-                        vb: Joi.number(),   // download video_bitrate
-                        pl: Joi.number()    // download packet_loss
-                    }),
-
-            t: Joi.object({
-                        ip: Joi.string().ip({       // transport ip
-                            version: ['ipv4'],                            
-                            cidr: 'forbidden' 
-                        }), 
-                        p: Joi.number(),            // transport port
-                        tp: Joi.string().valid('tcp', 'udp'), // transport type
-                        lip: Joi.string().ip({                  // transport local_ip
-                            version: ['ipv4'],                          
-                            cidr: 'forbidden' 
-                        }),
-                        lp: Joi.number()                        // transport local_port
+            br: // browser_name
+            Joi.string(),  
+            os: // operating_system
+            Joi.string(), 
+            sr: // server_region
+            Joi.string().valid(...validatorConfig.authorizedRegions),
+            cq: // connection_quality
+            Joi.number().min(0).max(100), 
+            u: // upload metrics
+            Joi.object({ 
+                bw: // upload bandwidth
+                Joi.number(),   
+                ab: // upload audio_bitrate
+                Joi.number(),   
+                vb: // upload video_bitrate
+                Joi.number(),   
+                pl: // upload packet_loss
+                Joi.number()    
+            }),
+            d: //download metrics
+            Joi.object({
+                bw: // download bandwidth
+                Joi.number().optional().allow(null), 
+                ab: // download audio_bitrate
+                Joi.number(),   
+                vb: // download video_bitrate
+                Joi.number(),   
+                pl: // download packet_loss
+                Joi.number()    
+            }),
+            t: // transport metrics
+            Joi.object({ 
+                ip: // transport ip
+                Joi.string().ip({       
+                    version: ['ipv4'],                            
+                    cidr: 'forbidden' 
+                }), 
+                p: // transport port
+                Joi.number(),            
+                tp: // transport type
+                Joi.string().valid('tcp', 'udp'), 
+                lip: // transport local_ip
+                Joi.string().ip({                  
+                    version: ['ipv4'],                          
+                    cidr: 'forbidden' 
                 }),
-            ts: Joi.number().required()                         // timestamp
-        }).min(2).required() 
+                lp: // transport local_port
+                Joi.number()                        
+            }),
+            ts: //timestamp
+            Joi.number().required()
+        }).min(2).required()
     });
-
     return schema_validator;
 }
 
