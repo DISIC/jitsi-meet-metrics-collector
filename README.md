@@ -1,15 +1,40 @@
-# jitsi-meet-metrics-collector
+ :warning: **Warning** :warning:
+**This module is currently expiremental. Please use caution when using it in production.**
+# What is jitsi-meet-metrics-collector ?
+jitsi-meet-metrics-collector is a Node.js module that serves as a middleware for Express.js. It collects browser metrics and stores them in MongoDB database.
+```mermaid
+sequenceDiagram
+Browser->>jitsi-meet-metrics-collector: Gets the JS file that sends metrics from /getClient
+jitsi-meet-metrics-collector->>Browser: Sends client JS file
+loop Sending requests every X seconds (Default: 30s)
+    Browser->>jitsi-meet-metrics-collector: Sends metrics
+    jitsi-meet-metrics-collector->>jitsi-meet-metrics-collector: Verify and Validate metrics
+    jitsi-meet-metrics-collector->>MongoDB: Stores metrics
+    MongoDB->>jitsi-meet-metrics-collector: Sends confirmation
+    jitsi-meet-metrics-collector->>Browser: Sends confirmation
+    
+end
+```
+# Using jitsi-meet-metrics-collector
 
-jitsi-meet-metrics-collector is a middleware for express.js/jtsi-meet application that receives metrics from the client side and store them in mongodb.
+In order to use jitsi-meet-metrics-collector, it needs to be imported into Express.js as follows : 
 
-how to use it: 
-    simply install it with "npm install @apitech/jitsi-meet-metrics-collector"
-    use the middleware in your root app folder by using : app.use(your base url, require('@apitech/jitsi-meet-metrics-collector')(config));
-    the config object must contain a mongodb object with this format : 
-    {
-    mongoose: mongoose //the mongoose object must be connected already in the application,
-    confPattern: new RegExp('your regexp string here'),
-    authorizedRegions: array of strings of the authorized regions,
-    jmmcCollection: the name of your collection of type string,
+    var express = require('express');
+    var app = express();
+    var mongoose = require("mongoose")
+    var jitsiMeetMetricsCollector = require("@apitech/jitsi-meet-metrics-collector");
+    
+    var config = {
+        authorizedRegions : ["REGION1", "REGION2"]
     }
     
+    app.use('/jitsi-meet-metrics-collector',jitsiMeetMetricsCollector({
+        confPattern: new RegExp('^(?=(?:[a-zA-Z0-9]*[a-zA-Z]))(?=(?:[a-zA-Z0-9]*[0-9]){3})[a-zA-Z0-9]{10,}$'),
+        mongoose : mongoose,
+        authorizedRegions: config.authorizedRegions,
+        jmmcCollection: 'metrics-collector'
+    }));
+    
+    module.exports = app;
+
+:warning:Documentation in progress...:warning:
