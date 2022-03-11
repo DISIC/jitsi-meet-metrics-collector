@@ -7,6 +7,8 @@ var cookieParser = require('cookie-parser');
 var jitsiMeetMetricsCollector = require('../../index');
 var MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer;
 
+
+// declaring mongo in memory instance
 const mongod = async () => {
     return await MongoMemoryServer.create({
         instance:{
@@ -58,4 +60,6 @@ app.use('/',jitsiMeetMetricsCollector({
     authorizedRegions: config.authorizedRegions,
     jmmcCollection: 'metrics-collector'
 }));
+
+
 module.exports = app.listen(AppListeningPort, console.log(`App listening on port ${AppListeningPort}`));
