@@ -4,14 +4,14 @@
 jitsi-meet-metrics-collector is a Node.js module that serves as a middleware for Express.js. It collects browser metrics and stores them in MongoDB database.
 ```mermaid
 sequenceDiagram
-Browser->>jitsi-meet-metrics-collector: Gets the JS file that sends metrics from /getClient
-jitsi-meet-metrics-collector->>Browser: Sends client JS file
+Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
+jitsi-meet-metrics-collector->>Browser: Send client JS file
 loop Sending requests every X seconds (Default: 30s)
-    Browser->>jitsi-meet-metrics-collector: Sends metrics
+    Browser->>jitsi-meet-metrics-collector: Send metrics
     jitsi-meet-metrics-collector->>jitsi-meet-metrics-collector: Verify and Validate metrics
-    jitsi-meet-metrics-collector->>MongoDB: Stores metrics
-    MongoDB->>jitsi-meet-metrics-collector: Sends confirmation
-    jitsi-meet-metrics-collector->>Browser: Sends confirmation
+    jitsi-meet-metrics-collector->>MongoDB: Store metrics
+    MongoDB->>jitsi-meet-metrics-collector: Send confirmation
+    jitsi-meet-metrics-collector->>Browser: Send confirmation
     
 end
 ```
