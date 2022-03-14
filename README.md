@@ -37,4 +37,4 @@ In order to use jitsi-meet-metrics-collector, it needs to be imported into Expre
     
     module.exports = app;
 
-# lookup ./test/app/appTest.js for a real example
+lookup ./test/app/appTest.js for a real example
