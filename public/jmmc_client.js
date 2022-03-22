@@ -10,6 +10,7 @@ const jitsi_meet_infos = {
     uid: getStaticId()
 }
 
+
 class jitsi_meet_data {
     constructor() {
         this.j_br = "";  // browser_name
@@ -33,6 +34,7 @@ class jitsi_meet_data {
         this.j_t_tp = "tcp";       // transport type
         this.j_t_lip = "0.0.0.0"; // transport local_ip
         this.j_t_lp = "0";          // transport local_port
+        this.j_t_rip = "0.0.0.0";   // real ip
 
         this.j_v = {}; // video
 
@@ -168,6 +170,18 @@ function collectBrowserInfos() {
 
 // update stats receives data and update each corresponding parameter in the class
 function updateStats(stats) {
+
+    fetch("/jitsi-meet-metrics-collector/getIp", {
+        headers: {'Content-Type': 'application/json'},
+        method: 'GET'
+    })
+    .then(res => {
+        return res.json();
+    }
+    )
+    .then(res => jitsi_meet_buffer.updateIP(res.ip, "j_t_rip"))
+    .catch(err => {});
+
     if (stats.serverRegion) {
         jitsi_meet_buffer.updateStr(stats.serverRegion, "j_sr")
     }

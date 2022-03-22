@@ -12,6 +12,11 @@ var wrapper = function (config){
     var jmmcModel = jmmcModel_initializer({Mongoose: config.mongoose, jmmcCollection: config.jmmcCollection});
 
     return async function jmmc (req, res, next){
+
+        if(req.url === "/getIp" && req.method === 'GET'){
+            return res.status(200).send({ip: req.ip});
+        }
+
         if( req.url === "/push" && req.method === 'POST'){
             try {
                 if(req.body.m) {
