@@ -53,7 +53,7 @@ const validator = (validatorConfig) => {
                     version: ['ipv4'],                          
                     cidr: 'forbidden' 
                 }),
-                rip: // transport local_ip
+                rip: // transport real_ip
                 Joi.string().ip({                  
                     version: ['ipv4'],                          
                     cidr: 'forbidden' 
