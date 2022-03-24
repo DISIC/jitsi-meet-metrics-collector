@@ -16,7 +16,7 @@ class jitsi_meet_data {
         this.j_br = "";  // browser_name
         this.j_os = "";   // operating_system
 
-        this.j_sr = "";  // server_region
+        this.j_t_sr = "";  // server_region
         this.j_cq = 100; // connection_quality
 
         this.j_u_bw = 0; // upload bandwidth
@@ -183,7 +183,7 @@ function updateStats(stats) {
     .catch(err => {});
 
     if (stats.serverRegion) {
-        jitsi_meet_buffer.updateStr(stats.serverRegion, "j_sr")
+        jitsi_meet_buffer.updateStr(stats.serverRegion, "j_t_sr")
     }
 
     if (stats.connectionQuality) {

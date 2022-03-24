@@ -10,9 +10,7 @@ const validator = (validatorConfig) => {
             br: // browser_name
             Joi.string(),  
             os: // operating_system
-            Joi.string(), 
-            sr: // server_region
-            Joi.string().valid(...validatorConfig.authorizedRegions),
+            Joi.string(),
             cq: // connection_quality
             Joi.number().min(0).max(100), 
             u: // upload metrics
@@ -59,7 +57,9 @@ const validator = (validatorConfig) => {
                     cidr: 'forbidden' 
                 }),
                 lp: // transport local_port
-                Joi.number()                        
+                Joi.number(),
+                sr: // server_region
+                Joi.string().valid(...validatorConfig.authorizedRegions)                        
             }),
             ts: //timestamp
             Joi.number().required()
