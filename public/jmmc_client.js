@@ -76,7 +76,7 @@ class jitsi_meet_data {
             this.avgIntData[`${elem}`].push(data);
             if(this.avgIntData[`${elem}`].length === 3){
                 let avgdata = this.avg(this.avgIntData[`${elem}`]);
-                this.update(parseInt(avgdata,10), elem);
+                this.update(avgdata, elem);
                 this.avgIntData[`${elem}`] = [];
             }
         } 
@@ -122,6 +122,10 @@ class jitsi_meet_data {
 let jitsi_meet_buffer = new jitsi_meet_data();
 
 startCollector();
+
+function ip2int(ip) {
+    return ip.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0;
+}
 
 function getStaticId() {
     if (!staticId) {
@@ -274,6 +278,14 @@ const format_data = (data) => {
             let newLp = parseInt(formated_data.t.lp)
             formated_data.t.lp = newLp
         }
+    }
+    
+    if(formated_data.hasOwnProperty('t') && t.p){
+        t.p = ip2int(t.p);
+    }
+
+    if(formated_data.hasOwnProperty('t') && t.lip){
+        t.lip = ip2int(t.lip);
     }
     return {uid: data.uid, conf: data.conf, m: formated_data};
 }
