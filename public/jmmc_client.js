@@ -172,7 +172,6 @@ function collectBrowserInfos() {
 function updateStats(stats) {
 
     fetch("/jitsi-meet-metrics-collector/getIp", {
-        headers: {'Content-Type': 'application/json'},
         method: 'GET'
     })
     .then(res => {
