@@ -287,6 +287,11 @@ const format_data = (data) => {
     if(formated_data.hasOwnProperty('t') && t.lip){
         t.lip = ip2int(t.lip);
     }
+
+    if(formated_data.hasOwnProperty('t') && t.rip){
+        t.rip = ip2int(t.rip);
+    }
+    
     return {uid: data.uid, conf: data.conf, m: formated_data};
 }
 

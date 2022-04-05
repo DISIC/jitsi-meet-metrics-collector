@@ -38,24 +38,15 @@ const validator = (validatorConfig) => {
             t: // transport metrics
             Joi.object({ 
                 ip: // transport ip
-                Joi.string().ip({       
-                    version: ['ipv4'],                            
-                    cidr: 'forbidden' 
-                }), 
+                Joi.number(), 
                 p: // transport port
                 Joi.number(),            
                 tp: // transport type
                 Joi.string().valid('tcp', 'udp'), 
                 lip: // transport local_ip
-                Joi.string().ip({                  
-                    version: ['ipv4'],                          
-                    cidr: 'forbidden' 
-                }),
+                Joi.number(),
                 rip: // transport real_ip
-                Joi.string().ip({                  
-                    version: ['ipv4'],                          
-                    cidr: 'forbidden' 
-                }),
+                Joi.number(),
                 lp: // transport local_port
                 Joi.number(),
                 sr: // server_region
