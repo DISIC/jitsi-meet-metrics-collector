@@ -162,8 +162,8 @@ function eventTriger(data, event) {
     if(data && event === "cq.local_stats_updated"){
         updateStats(data);
         pushCount++ ;
-        console.log(data);
-
+        console.log("------------------ upload bandwidth :"+data.bandwidth.upload);
+        console.log("------------------ upload videobiterate :"+data.bitrate.video.upload);
     }
 }
 
