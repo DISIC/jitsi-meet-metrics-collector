@@ -211,7 +211,7 @@ function updateStats(stats) {
         }
     }
 
-    if (stats.pcketLoss) {
+    if (stats.packetLoss) {
         jitsi_meet_buffer.updateInt(stats.packetLoss.upload, "j_u_pl");
         jitsi_meet_buffer.updateInt(stats.packetLoss.download, "j_d_pl");
     }
