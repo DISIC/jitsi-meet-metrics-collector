@@ -157,6 +157,7 @@ function eventTriger(data, event) {
     if(pushCount === PUSHCONDITION){
         pushStats();
         pushCount = 0;
+        console.log("update stats bwu: " + data.bandwidth.upload);
     }
 
     if(data && event === "cq.local_stats_updated"){
