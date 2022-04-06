@@ -76,7 +76,7 @@ class jitsi_meet_data {
             this.avgIntData[`${elem}`].push(data);
             if(this.avgIntData[`${elem}`].length === 3){
                 let avgdata = this.avg(this.avgIntData[`${elem}`]);
-                this.update(avgdata, elem);
+                this.update(parseFloat(avgdata), elem);
                 this.avgIntData[`${elem}`] = [];
             }
         } 
@@ -280,16 +280,16 @@ const format_data = (data) => {
         }
     }
     
-    if(formated_data.hasOwnProperty('t') && t.p){
-        t.p = ip2int(t.p);
+    if(formated_data.hasOwnProperty('t') && formated_data.t.p){
+        formated_data.t.ip = ip2int(formated_data.t.ip);
     }
 
-    if(formated_data.hasOwnProperty('t') && t.lip){
-        t.lip = ip2int(t.lip);
+    if(formated_data.hasOwnProperty('t') && formated_data.t.lip){
+        formated_data.t.lip = ip2int(formated_data.t.lip);
     }
 
-    if(formated_data.hasOwnProperty('t') && t.rip){
-        t.rip = ip2int(t.rip);
+    if(formated_data.hasOwnProperty('t') && formated_data.t.rip){
+        formated_data.t.rip = ip2int(formated_data.t.rip);
     }
     
     return {uid: data.uid, conf: data.conf, m: formated_data};
