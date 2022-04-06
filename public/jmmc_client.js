@@ -216,7 +216,7 @@ function updateStats(stats) {
         jitsi_meet_buffer.updateInt(stats.packetLoss.download, "j_d_pl");
     }
 
-    if (stats.transport) {
+    if (stats.transport && stats.transport.length > 0) {
         
         let transport = stats.transport[0];
         jitsi_meet_buffer.updateIP(transport.ip.split(":")[0], "j_t_ip");
