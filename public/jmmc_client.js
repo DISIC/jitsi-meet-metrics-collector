@@ -17,17 +17,17 @@ class jitsi_meet_data {
         this.j_os = "";   // operating_system
 
         this.j_t_sr = "";  // server_region
-        this.j_cq = 100; // connection_quality
+        this.j_cq = null; // connection_quality
 
-        this.j_u_bw = 0; // upload bandwidth
-        this.j_u_ab = 0; // upload audio_bitrate
-        this.j_u_vb = 0; // upload video_bitrate
-        this.j_u_pl = 0; // upload packet_loss
+        this.j_u_bw = null; // upload bandwidth
+        this.j_u_ab = null; // upload audio_bitrate
+        this.j_u_vb = null; // upload video_bitrate
+        this.j_u_pl = null; // upload packet_loss
 
-        this.j_d_bw = 0; // download bandwidth
-        this.j_d_ab = 0; // download audio_bitrate
-        this.j_d_vb = 0; // download video_bitrate
-        this.j_d_pl = 0; // download packet_loss
+        this.j_d_bw = null; // download bandwidth
+        this.j_d_ab = null; // download audio_bitrate
+        this.j_d_vb = null; // download video_bitrate
+        this.j_d_pl = null; // download packet_loss
 
         this.j_t_ip = "0.0.0.0";  // transport ip
         this.j_t_p = "0";           // transport port
