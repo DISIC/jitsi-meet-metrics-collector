@@ -61,7 +61,7 @@ class jitsi_meet_data {
     avg(arr){
         var sum = 0;
         for( var i = 0; i < arr.length; i++ ){
-            sum += parseInt( arr[i], 10 ); //don't forget to add the base
+            sum += arr[i]; //don't forget to add the base
         }
         return (sum/arr.length).toFixed(2);
     }
