@@ -63,7 +63,8 @@ var wrapper = function (config){
                             _id: newId,
                             conf: formated_data.conf,
                             uid: formated_data.uid,
-                            m: [{br: uaParser(req.headers["user-agent"]).browser, os: uaParser(req.headers["user-agent"]).os}]
+                            m: [{br: uaParser(req.headers["user-agent"]).browser.name + " " + uaParser(req.headers["user-agent"]).browser.major, 
+                            os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version}]
                         });
                         //the cookie is signed with a secret
                         res.cookie('jmmc_objectId', newId, {secure: true, signed: true, httpOnly: true});
