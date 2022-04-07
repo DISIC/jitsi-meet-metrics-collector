@@ -1,5 +1,6 @@
 'use strict';
 //modules
+var uaParser = require("ua-parser-js")
 var path = require("path");
 var validator = require("./validator/schema_validator");
 var jmmcModel_initializer = require("./schema/jmmcModel_intializer");
@@ -62,7 +63,7 @@ var wrapper = function (config){
                             _id: newId,
                             conf: formated_data.conf,
                             uid: formated_data.uid,
-                            m: [formated_data.m]
+                            m: [{br: uaParser(req.headers["user-agent"]).browser, os: uaParser(req.headers["user-agent"]).os}]
                         });
                         //the cookie is signed with a secret
                         res.cookie('jmmc_objectId', newId, {secure: true, signed: true, httpOnly: true});

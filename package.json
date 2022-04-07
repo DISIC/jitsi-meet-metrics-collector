@@ -1,6 +1,6 @@
 {
   "name": "@apitech/jitsi-meet-metrics-collector",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,8 @@
     "chai-http": "^4.3.0",
     "cookie-parser": "^1.4.6",
     "express": "^4.17.2",
-    "mongoose": "^5.13.9"
+    "mongoose": "^5.13.9",
+    "ua-parser-js": "^1.0.2"
   },
   "private": false,
   "publishConfig": {
