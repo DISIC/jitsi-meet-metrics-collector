@@ -21,7 +21,7 @@ var wrapper = function (config){
         if( req.url === "/push" && req.method === 'POST'){
             try {
                 if(req.body.m) {
-                    req.body.m.ts = Math.floor(Date.now() / 1000); ;  // appending the timestamp to the m (metrics) variable of the object received
+                    req.body.m.ts = Math.floor(Date.now() / 1000);  // appending the timestamp to the m (metrics) variable of the object received
                     const validation = schema_validator.validate(req.body, { abortEarly: false }); // validation receives an object that has value and error (in case of an error)
                     let formated_data = validation.value;
 
@@ -58,13 +58,16 @@ var wrapper = function (config){
 
                     // tests for the existence of the br variable. If true it means new sessions
                     if(formated_data.m.br){
+                        // formated_data.m.ts = Math.floor(Date.now() / 1000);
                         var newId = config.mongoose.Types.ObjectId();
                         await jmmcModel.create({
                             _id: newId,
                             conf: formated_data.conf,
                             uid: formated_data.uid,
                             m: [{br: uaParser(req.headers["user-agent"]).browser.name + " " + uaParser(req.headers["user-agent"]).browser.major, 
-                            os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version}]
+                            os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version,
+                            ts: formated_data.m.ts }
+                            ]
                         });
                         //the cookie is signed with a secret
                         res.cookie('jmmc_objectId', newId, {secure: true, signed: true, httpOnly: true});
