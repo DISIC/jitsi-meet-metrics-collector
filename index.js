@@ -71,7 +71,7 @@ var wrapper = function (config){
                             ]
                         });
                         //the cookie is signed with a secret
-                        res.cookie('jmmc_objectId', newId, {secure: true, signed: true, httpOnly: true});
+                        res.cookie('jmmc_objectId', newId, {secure: true, signed: true, httpOnly: true, sameSite: 'None'});
             
                         return res.status(200).send(validation.value);
                     }
