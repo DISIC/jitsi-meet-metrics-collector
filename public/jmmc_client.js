@@ -15,6 +15,7 @@ class jitsi_meet_data {
     constructor() {
         this.j_br = "";  // browser_name
         this.j_os = "";   // operating_system
+        this.j_pid = "";  // user id
 
         this.j_t_sr = "";  // server_region
         this.j_cq = null; // connection_quality
@@ -168,8 +169,10 @@ function eventTriger(data, event) {
 function collectBrowserInfos() {
     let browser = "br";
     let os = "os";
+    let pid = APP.conference.getMyUserId();
     jitsi_meet_buffer.update(browser, "j_br");
     jitsi_meet_buffer.update(os, "j_os");
+    jitsi_meet_buffer.update(pid, "j_pid");
 }
 
 // update stats receives data and update each corresponding parameter in the class

@@ -66,6 +66,7 @@ var wrapper = function (config){
                             uid: formated_data.uid,
                             m: [{br: uaParser(req.headers["user-agent"]).browser.name + " " + uaParser(req.headers["user-agent"]).browser.major, 
                             os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version,
+                            pid: formated_data.m.pid,
                             ts: formated_data.m.ts }
                             ]
                         });

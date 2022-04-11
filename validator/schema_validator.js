@@ -11,6 +11,8 @@ const validator = (validatorConfig) => {
             Joi.string(),  
             os: // operating_system
             Joi.string(),
+            pid: // operating_system
+            Joi.string().required(),
             cq: // connection_quality
             Joi.number().min(0).max(100), 
             u: // upload metrics
