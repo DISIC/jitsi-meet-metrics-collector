@@ -37,6 +37,8 @@ class jitsi_meet_data {
         this.j_t_lp = "0";          // transport local_port
         this.j_t_rip = "0.0.0.0";   // real ip
 
+        this.j_rs = {};
+
         this.j_v = {}; // video
 
         this.avgIntData = {}; // object of arrays that contains int elements to be updated after calculating their average
@@ -192,6 +194,11 @@ function updateStats(stats) {
         jitsi_meet_buffer.updateStr(stats.serverRegion, "j_t_sr")
     }
 
+    if (stats.resolution){
+        let resolution = {height: stats.resolution[Object.keys(stats.resolution)[0]][Object.keys(stats.resolution[Object.keys(stats.resolution)[0]])].height, width:  stats.resolution[Object.keys(stats.resolution)[0]][Object.keys(stats.resolution[Object.keys(stats.resolution)[0]])].width}
+        jitsi_meet_buffer.update(resolution, "j_rs")
+    }
+
     if (stats.connectionQuality) {
         jitsi_meet_buffer.updateInt(stats.connectionQuality, "j_cq")
     }
@@ -264,6 +271,7 @@ const format_data = (data) => {
             }
         }
     }
+   
     for(let key in formated_data){
         if(typeof formated_data[key] === 'object'){
             if(Object.keys(formated_data[key]).length === 0){
@@ -272,6 +280,7 @@ const format_data = (data) => {
             }
         }  
     }
+    
     if(formated_data.hasOwnProperty('t')){
         if(formated_data.t.p){
             let newP = parseInt(formated_data.t.p)
@@ -294,6 +303,7 @@ const format_data = (data) => {
     if(formated_data.hasOwnProperty('t') && formated_data.t.rip){
         formated_data.t.rip = ip2int(formated_data.t.rip);
     }
+
     
     return {uid: data.uid, conf: data.conf, m: formated_data};
 }
@@ -301,6 +311,7 @@ const format_data = (data) => {
 // pushStats is a function that pushes formated changed data to the specified url source
 function pushStats() {
     let update = jitsi_meet_buffer.get();
+   
     if (Object.keys(update).length > 0) {
         update.uid = jitsi_meet_infos.uid;
         update.conf = jitsi_meet_infos.conf;
