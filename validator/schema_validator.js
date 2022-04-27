@@ -15,8 +15,10 @@ const validator = (validatorConfig) => {
             Joi.string().required(),
             cq: // connection_quality
             Joi.number().min(0).max(100), 
-            rs: // resolution
-            Joi.object({height: Joi.number(), width: Joi.number()}), 
+            rsheight: // resolution : height
+            Joi.number(), 
+            rswidth: // resolution : width
+            Joi.number(), 
             u: // upload metrics
             Joi.object({ 
                 bw: // upload bandwidth

@@ -37,7 +37,8 @@ class jitsi_meet_data {
         this.j_t_lp = "0";          // transport local_port
         this.j_t_rip = "0.0.0.0";   // real ip
 
-        this.j_rs = {};
+        this.j_rsheight = null;
+        this.j_rswidth = null;
 
         this.j_v = {}; // video
 
@@ -86,10 +87,10 @@ class jitsi_meet_data {
     }
 
     update(data, elem) {
-        if (data !== null && data !== this[elem]) {
-            this[elem] = data;
-            this.updated.push(elem)
-        }
+            if (data !== null && data !== this[elem]) {
+                this[elem] = data;
+                this.updated.push(elem)
+            }
     }
 
     updateVideo(video_uid, video_data, key) {
@@ -196,7 +197,9 @@ function updateStats(stats) {
 
     if (stats.resolution){
         let resolution = {height: stats.resolution[Object.keys(stats.resolution)[0]][Object.keys(stats.resolution[Object.keys(stats.resolution)[0]])].height, width:  stats.resolution[Object.keys(stats.resolution)[0]][Object.keys(stats.resolution[Object.keys(stats.resolution)[0]])].width}
-        jitsi_meet_buffer.update(resolution, "j_rs")
+        jitsi_meet_buffer.update(resolution.height, "j_rsheight");
+        jitsi_meet_buffer.update(resolution.width, "j_rswidth");
+
     }
 
     if (stats.connectionQuality) {
