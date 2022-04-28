@@ -10,6 +10,9 @@ const jitsi_meet_infos = {
     uid: getStaticId()
 }
 
+let id = APP.conference.getMyUserId();
+
+
 
 class jitsi_meet_data {
     constructor() {
@@ -37,8 +40,8 @@ class jitsi_meet_data {
         this.j_t_lp = "0";          // transport local_port
         this.j_t_rip = "0.0.0.0";   // real ip
 
-        this.j_rsheight = null;
-        this.j_rswidth = null;
+        this.j_res = {};
+        this.j_cdc = {};
 
         this.j_v = {}; // video
 
@@ -91,6 +94,20 @@ class jitsi_meet_data {
                 this[elem] = data;
                 this.updated.push(elem)
             }
+    }
+
+    updateRes(data, elem){
+        if(data !== null && (data.height !== this[elem].height || data.width !== this[elem].width)){
+            this[elem] = data;
+            this.updated.push(elem);
+        }
+    }
+
+    updateCodec(data, elem){
+        if(data !== null && (data.audio !== this[elem].audio || data.video !== this[elem].video)){
+            this[elem] = data;
+            this.updated.push(elem);
+        }
     }
 
     updateVideo(video_uid, video_data, key) {
@@ -196,10 +213,13 @@ function updateStats(stats) {
     }
 
     if (stats.resolution){
-        let resolution = {height: stats.resolution[Object.keys(stats.resolution)[0]][Object.keys(stats.resolution[Object.keys(stats.resolution)[0]])].height, width:  stats.resolution[Object.keys(stats.resolution)[0]][Object.keys(stats.resolution[Object.keys(stats.resolution)[0]])].width}
-        jitsi_meet_buffer.update(resolution.height, "j_rsheight");
-        jitsi_meet_buffer.update(resolution.width, "j_rswidth");
+        let resolution = stats.resolution[APP.conference.getMyUserId()][Object.keys(stats.resolution[APP.conference.getMyUserId()])[0]]
+        jitsi_meet_buffer.updateRes(resolution, "j_res");
+    }
 
+    if (stats.codec){
+        let codec = stats.codec[APP.conference.getMyUserId()][Object.keys(stats.codec[APP.conference.getMyUserId()])[0]]
+        jitsi_meet_buffer.updateCodec(codec, "j_cdc");
     }
 
     if (stats.connectionQuality) {
@@ -265,8 +285,18 @@ const format_data = (data) => {
     for(let key in data){
         let split_key_array = key.split("_");
         if(split_key_array.includes("j")){
+
             if(split_key_array.length === 2 && split_key_array[1] != "v"){
-                formated_data[split_key_array[1]] = data[key];
+                if(split_key_array[1] !== "cdc" || split_key_array[1] !== "res"){
+                    formated_data[split_key_array[1]] = data[key];
+                }
+                if(split_key_array[1] == "cdc"){
+                    formated_data["cdc"] = {a: data[key]["audio"], v: data[key]["video"]}
+                }
+                if(split_key_array[1] == "res"){
+                    formated_data["res"] = {h: data[key]["height"], w: data[key]["width"]}
+                }
+                
             }
 
             if(split_key_array.length === 3){
