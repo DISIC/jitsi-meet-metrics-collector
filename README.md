@@ -38,3 +38,16 @@ In order to use jitsi-meet-metrics-collector, it needs to be imported into Expre
     module.exports = app;
 
 lookup ./test/app/appTest.js for a real example
+
+# Requirements
+
+    - Node > v16.14.2
+    - Jitsi > v
+
+# How does it work
+
+    once the user opens a web conference the jmmc_client.js file is uploaded and appended to the client script, the first post request send user's meta-data, the second sends metrics data (connectionquality, bandwidth...), and each 30 seconds after that it sends just the updated (changed) metrics. 
+     example :
+        - the fist request. the script sends the browser, the operating sustem and pid
+        - the second request it sends metrics data containing for exemple cq (stands for connexion quality)
+        - after that if the connexion quality change it sends metrics with the changed data if not it sends just the updated data without cq.
