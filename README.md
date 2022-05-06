@@ -36,6 +36,7 @@ lookup ./test/app/appTest.js for a real example
     once the user opens a web conference the jmmc_client.js file is uploaded and appended to the client 
     script,the first post request send user's meta-data, the second sends metrics data (connectionquality,
     bandwidth...),and each 30 seconds after that it sends just the updated (changed) metrics. 
+
     ```mermaid
     sequenceDiagram
     Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
@@ -49,6 +50,7 @@ lookup ./test/app/appTest.js for a real example
         
     end
     ```
+    
     example :
       - the fist request. the script sends the browser, the operating sustem and pid
       - the second request it sends metrics data containing for exemple cq (stands for connexion quality)
