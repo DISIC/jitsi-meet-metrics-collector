@@ -36,17 +36,17 @@ lookup ./test/app/appTest.js for a real example
     once the user opens a web conference the jmmc_client.js file is uploaded and appended to the client 
     script,the first post request send user's meta-data, the second sends metrics data (connectionquality,
     bandwidth...),and each 30 seconds after that it sends just the updated (changed) metrics. 
-
     ```mermaid
-        sequenceDiagram
-        Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
-        jitsi-meet-metrics-collector->>Browser: Send client JS file
-        loop Sending requests every X seconds (Default: 30s)
+    sequenceDiagram
+    Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
+    jitsi-meet-metrics-collector->>Browser: Send client JS file
+    loop Sending requests every X seconds (Default: 30s)
         Browser->>jitsi-meet-metrics-collector: Send metrics
         jitsi-meet-metrics-collector->>jitsi-meet-metrics-collector: Verify and Validate metrics
         jitsi-meet-metrics-collector->>MongoDB: Store metrics
         MongoDB->>jitsi-meet-metrics-collector: Send confirmation
         jitsi-meet-metrics-collector->>Browser: Send confirmation
+        
     end
     ```
     example :
