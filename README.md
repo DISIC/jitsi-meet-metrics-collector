@@ -1,20 +1,7 @@
- :warning: **Warning** :warning:
-**This module is currently expiremental. Please use caution when using it in production.**
+
 # What is jitsi-meet-metrics-collector ?
 jitsi-meet-metrics-collector is a Node.js module that serves as a middleware for Express.js. It collects browser metrics and stores them in MongoDB database.
-```mermaid
-sequenceDiagram
-Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
-jitsi-meet-metrics-collector->>Browser: Send client JS file
-loop Sending requests every X seconds (Default: 30s)
-    Browser->>jitsi-meet-metrics-collector: Send metrics
-    jitsi-meet-metrics-collector->>jitsi-meet-metrics-collector: Verify and Validate metrics
-    jitsi-meet-metrics-collector->>MongoDB: Store metrics
-    MongoDB->>jitsi-meet-metrics-collector: Send confirmation
-    jitsi-meet-metrics-collector->>Browser: Send confirmation
-    
-end
-```
+
 # Using jitsi-meet-metrics-collector
 
 In order to use jitsi-meet-metrics-collector, it needs to be imported into Express.js as follows : 
@@ -42,7 +29,7 @@ lookup ./test/app/appTest.js for a real example
 # Requirements
 
     - Node > v16.14.2
-    - Jitsi > v
+    - Jitsi > v1.0.5913
 
 # How does it work
 
@@ -50,6 +37,18 @@ lookup ./test/app/appTest.js for a real example
     script,the first post request send user's meta-data, the second sends metrics data (connectionquality,
     bandwidth...),and each 30 seconds after that it sends just the updated (changed) metrics. 
 
+    ```mermaid
+    sequenceDiagram
+    Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
+    jitsi-meet-metrics-collector->>Browser: Send client JS file
+    loop Sending requests every X seconds (Default: 30s)
+        Browser->>jitsi-meet-metrics-collector: Send metrics
+        jitsi-meet-metrics-collector->>jitsi-meet-metrics-collector: Verify and Validate metrics
+        jitsi-meet-metrics-collector->>MongoDB: Store metrics
+        MongoDB->>jitsi-meet-metrics-collector: Send confirmation
+        jitsi-meet-metrics-collector->>Browser: Send confirmation
+    end
+    ```
     example :
       - the fist request. the script sends the browser, the operating sustem and pid
       - the second request it sends metrics data containing for exemple cq (stands for connexion quality)
