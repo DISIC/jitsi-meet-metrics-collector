@@ -38,10 +38,10 @@ lookup ./test/app/appTest.js for a real example
     bandwidth...),and each 30 seconds after that it sends just the updated (changed) metrics. 
 
     ```mermaid
-    sequenceDiagram
-    Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
-    jitsi-meet-metrics-collector->>Browser: Send client JS file
-    loop Sending requests every X seconds (Default: 30s)
+        sequenceDiagram
+        Browser->>jitsi-meet-metrics-collector: Get the JS file that sends metrics from /getClient
+        jitsi-meet-metrics-collector->>Browser: Send client JS file
+        loop Sending requests every X seconds (Default: 30s)
         Browser->>jitsi-meet-metrics-collector: Send metrics
         jitsi-meet-metrics-collector->>jitsi-meet-metrics-collector: Verify and Validate metrics
         jitsi-meet-metrics-collector->>MongoDB: Store metrics
