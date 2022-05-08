@@ -2,7 +2,7 @@
 # What is jitsi-meet-metrics-collector ?
 jitsi-meet-metrics-collector is a Node.js module that serves as a middleware for Express.js. It collects browser metrics and stores them in MongoDB database.
 
-# How does it work
+# How does it work ? 
 
 once the user opens a web conference the jmmc_client.js file is uploaded and appended to the client script,the first post request send user's meta-data, the second sends metrics data (connectionquality,bandwidth...),and each 30 seconds after that it sends just the updated (changed)metrics. 
 
