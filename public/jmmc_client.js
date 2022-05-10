@@ -213,7 +213,10 @@ function updateStats(stats) {
     }
 
     if (stats.resolution && APP.conference.getMyUserId()){
-        let resolution = stats.resolution[APP.conference.getMyUserId()][Object.keys(stats.resolution[APP.conference.getMyUserId()])[0]]
+        let resolution = null;
+        if(stats.resolution.hasOwnProperty(APP.conference.getMyUserId())){
+            resolution = stats.resolution[APP.conference.getMyUserId()][Object.keys(stats.resolution[APP.conference.getMyUserId()])[0]]
+        }
         if(resolution){
            jitsi_meet_buffer.updateRes(resolution, "j_res"); 
         }
