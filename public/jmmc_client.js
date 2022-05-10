@@ -223,7 +223,10 @@ function updateStats(stats) {
     }
 
     if (stats.codec && APP.conference.getMyUserId()){
-        let codec = stats.codec[APP.conference.getMyUserId()][Object.keys(stats.codec[APP.conference.getMyUserId()])[0]]
+        let codec = null;
+        if(stats.codec.hasOwnProperty(APP.conference.getMyUserId())){
+            codec = stats.codec[APP.conference.getMyUserId()][Object.keys(stats.codec[APP.conference.getMyUserId()])[0]]
+        }
         if(codec){
            jitsi_meet_buffer.updateCodec(codec, "j_cdc"); 
         }  
