@@ -212,14 +212,18 @@ function updateStats(stats) {
         jitsi_meet_buffer.updateStr(stats.serverRegion, "j_t_sr")
     }
 
-    if (stats.resolution){
+    if (stats.resolution && APP.conference.getMyUserId()){
         let resolution = stats.resolution[APP.conference.getMyUserId()][Object.keys(stats.resolution[APP.conference.getMyUserId()])[0]]
-        jitsi_meet_buffer.updateRes(resolution, "j_res");
+        if(resolution){
+           jitsi_meet_buffer.updateRes(resolution, "j_res"); 
+        }
     }
 
-    if (stats.codec){
+    if (stats.codec && APP.conference.getMyUserId()){
         let codec = stats.codec[APP.conference.getMyUserId()][Object.keys(stats.codec[APP.conference.getMyUserId()])[0]]
-        jitsi_meet_buffer.updateCodec(codec, "j_cdc");
+        if(codec){
+           jitsi_meet_buffer.updateCodec(codec, "j_cdc"); 
+        }  
     }
 
     if (stats.connectionQuality) {
