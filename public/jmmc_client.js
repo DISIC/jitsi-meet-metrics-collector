@@ -212,7 +212,7 @@ function updateStats(stats) {
         jitsi_meet_buffer.updateStr(stats.serverRegion, "j_t_sr")
     }
 
-    if (stats.resolution && APP.conference.getMyUserId()){
+    if (stats.resolution && APP.conference.getMyUserId() && Object.keys(stats.resolution).length > 0){
         let resolution = null;
         if(stats.resolution.hasOwnProperty(APP.conference.getMyUserId())){
             resolution = stats.resolution[APP.conference.getMyUserId()][Object.keys(stats.resolution[APP.conference.getMyUserId()])[0]]
@@ -222,7 +222,7 @@ function updateStats(stats) {
         }
     }
 
-    if (stats.codec && APP.conference.getMyUserId()){
+    if (stats.codec && APP.conference.getMyUserId() && Object.keys(stats.codec).length > 0){
         let codec = null;
         if(stats.codec.hasOwnProperty(APP.conference.getMyUserId())){
             codec = stats.codec[APP.conference.getMyUserId()][Object.keys(stats.codec[APP.conference.getMyUserId()])[0]]
@@ -267,15 +267,15 @@ function updateStats(stats) {
         jitsi_meet_buffer.updateStr(  transport.localip.split(":")[1]  , "j_t_lp");
     }
 
-    if (stats.resolution && Object.keys(stats.resolution).length > 0) {
-        Object.entries(stats.resolution).forEach(([video_uid, value]) => {
+    // if (stats.resolution && Object.keys(stats.resolution).length > 0) {
+    //     Object.entries(stats.resolution).forEach(([video_uid, value]) => {
 
-            let video_data = value[Object.keys(value)[0]];
+    //         let video_data = value[Object.keys(value)[0]];
 
-            jitsi_meet_buffer.updateVideo(video_uid, video_data["width"], "w")
-            jitsi_meet_buffer.updateVideo(video_uid, video_data["height"], "h")
-        })
-    }
+    //         jitsi_meet_buffer.updateVideo(video_uid, video_data["width"], "w")
+    //         jitsi_meet_buffer.updateVideo(video_uid, video_data["height"], "h")
+    //     })
+    // }
     if (stats.framerate && Object.keys(stats.framerate).length > 0) {
         Object.entries(stats.framerate).forEach(([video_uid, value]) => {
 
