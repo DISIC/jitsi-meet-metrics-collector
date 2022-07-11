@@ -362,6 +362,11 @@ function pushStats() {
             headers: {'Content-Type': 'application/json'},
             method: 'POST',
             body: JSON.stringify(format_data(update))
-        }).catch((e) => {});
+        })
+        .then(res => {
+            let cookie = browser.cookie.get();
+            localStorage.setItem('jmmc_cookie', cookie)
+        })
+        .catch((e) => {});
     }
 }
