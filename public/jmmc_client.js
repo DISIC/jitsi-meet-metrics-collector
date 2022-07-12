@@ -364,9 +364,8 @@ function pushStats() {
             body: JSON.stringify(format_data(update))
         })
         .then(res => {
-            let cookie = browser.cookies.get();
-            localStorage.setItem('jmmc_cookie', cookie);
-            window.parent = postMessage(cookie, "*");
+            let cookie = res.data.cookie
+            if (window !== window.top) parent.postMessage(cookie,"*"); //événement à envoyer à l'appli react
         })
         .catch((e) => {});
     }
