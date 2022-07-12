@@ -365,7 +365,8 @@ function pushStats() {
         })
         .then(res => {
             let cookie = browser.cookie.get();
-            localStorage.setItem('jmmc_cookie', cookie)
+            localStorage.setItem('jmmc_cookie', cookie);
+            window.parent = postMessage(cookie, "*");
         })
         .catch((e) => {});
     }
