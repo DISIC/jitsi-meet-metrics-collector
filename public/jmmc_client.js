@@ -364,7 +364,7 @@ function pushStats() {
             body: JSON.stringify(format_data(update))
         })
         .then(res => {
-            let cookie = browser.cookie.get();
+            let cookie = browser.cookies.get();
             localStorage.setItem('jmmc_cookie', cookie);
             window.parent = postMessage(cookie, "*");
         })
