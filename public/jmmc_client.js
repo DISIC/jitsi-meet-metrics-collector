@@ -363,9 +363,12 @@ function pushStats() {
             method: 'POST',
             body: JSON.stringify(format_data(update))
         })
-        .then(res => {
-            let jmmcMessage =JSON.stringify({appName: "jitsi-meet-metrics-collector", value: res.data.jmmc_objectId, type: "sessionStorage"})
-            if (window !== window.top) parent.postMessage(jmmcMessage,"*"); //event to send to parent 
+        .then(response => response.json())
+        .then(data => {
+            let jmmcMessage =JSON.stringify({appName: "jmmc", varName : "object_id", value: data.jmmc_objectId, type: "sessionStorage"});
+            if (window !== window.top) {
+                parent.postMessage(jmmcMessage,"*"); //event to send to parent
+            }
         })
         .catch((e) => {});
     }
