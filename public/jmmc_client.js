@@ -364,8 +364,8 @@ function pushStats() {
             body: JSON.stringify(format_data(update))
         })
         .then(res => {
-            let cookie = res.data.cookie
-            if (window !== window.top) parent.postMessage(cookie,"*"); //événement à envoyer à l'appli react
+            let jmmcMessage =JSON.stringify({appName: "jitsi-meet-metrics-collector", value: res.data.jmmc_objectId, type: "sessionStorage"})
+            if (window !== window.top) parent.postMessage(jmmcMessage,"*"); //event to send to parent 
         })
         .catch((e) => {});
     }
