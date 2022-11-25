@@ -168,8 +168,8 @@ function startCollector() {
 function logger() {
     jitsi_meet_infos.conf = APP.conference.roomName;
 
-    collectBrowserInfos();
-    pushStats();
+    collectBrowserInfos().then(() => pushStats());
+    
     events.forEach(event => APP.conference._room.on(event, data => eventTriger(data, event)))
 }
 
