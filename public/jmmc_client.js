@@ -186,13 +186,24 @@ function eventTriger(data, event) {
     }
 }
 
-function collectBrowserInfos() {
+async function collectBrowserInfos() {
     let browser = "br";
     let os = "os";
     let pid = APP.conference.getMyUserId();
-    jitsi_meet_buffer.update(browser, "j_br");
-    jitsi_meet_buffer.update(os, "j_os");
-    jitsi_meet_buffer.update(pid, "j_pid");
+    fetch("/jitsi-meet-metrics-collector/getIp", {
+        method: 'GET'
+    })
+    .then(res => {
+        return res.json();
+    }
+    )
+    .then(res => {
+        jitsi_meet_buffer.updateIP(res.ip, "j_t_rip");
+        jitsi_meet_buffer.update(browser, "j_br");
+        jitsi_meet_buffer.update(os, "j_os");
+        jitsi_meet_buffer.update(pid, "j_pid");
+    })
+    .catch(err => {});
 }
 
 // update stats receives data and update each corresponding parameter in the class
