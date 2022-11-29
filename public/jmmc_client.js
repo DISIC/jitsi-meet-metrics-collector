@@ -168,8 +168,8 @@ function startCollector() {
 function logger() {
     jitsi_meet_infos.conf = APP.conference.roomName;
 
-    collectBrowserInfos().then(() => pushStats());
-    
+    collectBrowserInfos();
+    pushStats();
     events.forEach(event => APP.conference._room.on(event, data => eventTriger(data, event)))
 }
 
@@ -186,24 +186,13 @@ function eventTriger(data, event) {
     }
 }
 
-async function collectBrowserInfos() {
+function collectBrowserInfos() {
     let browser = "br";
     let os = "os";
     let pid = APP.conference.getMyUserId();
-    fetch("/jitsi-meet-metrics-collector/getIp", {
-        method: 'GET'
-    })
-    .then(res => {
-        return res.json();
-    }
-    )
-    .then(res => {
-        jitsi_meet_buffer.updateIP(res.ip, "j_t_rip");
-        jitsi_meet_buffer.update(browser, "j_br");
-        jitsi_meet_buffer.update(os, "j_os");
-        jitsi_meet_buffer.update(pid, "j_pid");
-    })
-    .catch(err => {});
+    jitsi_meet_buffer.update(browser, "j_br");
+    jitsi_meet_buffer.update(os, "j_os");
+    jitsi_meet_buffer.update(pid, "j_pid");
 }
 
 // update stats receives data and update each corresponding parameter in the class
@@ -373,14 +362,6 @@ function pushStats() {
             headers: {'Content-Type': 'application/json'},
             method: 'POST',
             body: JSON.stringify(format_data(update))
-        })
-        .then(response => response.json())
-        .then(data => {
-            let jmmcMessage =JSON.stringify({appName: "jmmc", varName : "object_id", value: data.jmmc_objectId, type: "sessionStorage"});
-            if (window !== window.top) {
-                parent.postMessage(jmmcMessage,"*"); //event to send to parent
-            }
-        })
-        .catch((e) => {});
+        }).catch((e) => {});
     }
 }

@@ -67,7 +67,8 @@ var wrapper = function (config){
                             m: [{br: uaParser(req.headers["user-agent"]).browser.name + " " + uaParser(req.headers["user-agent"]).browser.major, 
                             os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version,
                             pid: formated_data.m.pid,
-                            ts: formated_data.m.ts }
+                            ts: formated_data.m.ts,
+                            t: {rip: req.ip} },
                             ]
                         });
                         //the cookie is signed with a secret
