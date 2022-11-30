@@ -198,16 +198,6 @@ function collectBrowserInfos() {
 // update stats receives data and update each corresponding parameter in the class
 function updateStats(stats) {
 
-    fetch("/jitsi-meet-metrics-collector/getIp", {
-        method: 'GET'
-    })
-    .then(res => {
-        return res.json();
-    }
-    )
-    .then(res => jitsi_meet_buffer.updateIP(res.ip, "j_t_rip"))
-    .catch(err => {});
-
     if (stats.serverRegion) {
         jitsi_meet_buffer.updateStr(stats.serverRegion, "j_t_sr")
     }
