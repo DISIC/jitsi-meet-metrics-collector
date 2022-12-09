@@ -352,6 +352,9 @@ function pushStats() {
             headers: {'Content-Type': 'application/json'},
             method: 'POST',
             body: JSON.stringify(format_data(update))
-        }).catch((e) => {});
+        })
+        .then(res => res.json())
+        .then(res => res.jmmc_objectId ? sessionStorage.setItem('jmmc_object_id', res.jmmc_objectId) : null)
+        .catch((e) => {});
     }
 }
