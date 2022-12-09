@@ -5,6 +5,9 @@ var path = require("path");
 var validator = require("./validator/schema_validator");
 var jmmcModel_initializer = require("./schema/jmmcModel_intializer");
 
+function ip2int(ip) {
+    return ip.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0;
+}
 
 //wrapper is function that returns the route object configured with the passed params
 var wrapper = function (config){
@@ -68,7 +71,7 @@ var wrapper = function (config){
                             os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version,
                             pid: formated_data.m.pid,
                             ts: formated_data.m.ts,
-                            t: {rip: req.ip} },
+                            t: {rip: ip2int(req.ip)} }, //Add the request IP address in the first metrics element
                             ]
                         });
                         //the cookie is signed with a secret
