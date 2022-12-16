@@ -2,6 +2,11 @@
 //modules
 var uaParser = require("ua-parser-js")
 var path = require("path");
+var fs = require("fs");
+var util = require("util");
+const readFileAsync = util.promisify(fs.readFile);
+
+
 var validator = require("./validator/schema_validator");
 var jmmcModel_initializer = require("./schema/jmmcModel_intializer");
 
@@ -16,10 +21,6 @@ var wrapper = function (config){
     var jmmcModel = jmmcModel_initializer({Mongoose: config.mongoose, jmmcCollection: config.jmmcCollection});
 
     return async function jmmc (req, res, next){
-        if(req.url === "/getIp" && req.method === 'GET'){
-            return res.status(200).send( {ip: req.ip} );
-        }
-
         if( req.url === "/push" && req.method === 'POST'){
             try {
                 if(req.body.m) {
@@ -97,18 +98,14 @@ var wrapper = function (config){
                 return res.status(500).send("something bad happened");
             }
         }else if( req.url === "/getClient" && req.method === 'GET'){
-                let jmmc_client_path = path.join(__dirname, 'public')+"/jmmc_client.js";
-                return res.sendFile(jmmc_client_path, function (err) {
-                        if (err) {
-                            next(err);
-                        }
-                    }
-                );
+            let index = await readFileAsync(path.join(__dirname, 'public/jmmc_client.js'), 'utf8');
+            index = index.replace('JMMC_PUSH_URL', config.pushURL); //MODIFY JMMC_PUSH_URL
+            res.set('Content-Type', 'application/javascript')
+            return res.send(index);
         }else{
-            return res.status(400).send("invalid url");
+            return res.status(400).send({error:"Bad URL or request method."});
         }
     }
-
 }
 
 module.exports = wrapper;

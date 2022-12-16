@@ -1,6 +1,6 @@
 
 let staticId = localStorage.getItem("jmmc_staticUserId"); 
-const url = "/jitsi-meet-metrics-collector/push";
+const url = "JMMC_PUSH_URL"; //this value is generated dynamically
 const events = [
     "cq.local_stats_updated",
 ];
