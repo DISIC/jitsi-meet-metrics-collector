@@ -61,7 +61,6 @@ var wrapper = function (config){
 
                     // tests for the existence of the br variable. If true it means new sessions
                     if(formated_data.m.br){
-                        // formated_data.m.ts = Math.floor(Date.now() / 1000);
                         var newId = config.mongoose.Types.ObjectId();
                         await jmmcModel.create({
                             _id: newId,
@@ -101,7 +100,6 @@ var wrapper = function (config){
         }else if( req.url === "/getClient" && req.method === 'GET'){
             let jmmc_client_content = await fs.readFile(path.join(__dirname, 'public/jmmc_client.js'), "utf8");
             jmmc_client_content = jmmc_client_content.replace('JMMC_PUSH_URL', config.pushURL); //Replace JMMC_PUSH_URL with the push url
-            //res.set('Content-Type', 'application/javascript')
             return res.set('Content-Type', 'application/javascript').send(jmmc_client_content);
         }else{
             return res.status(400).send({error:"Bad URL or request method."});
