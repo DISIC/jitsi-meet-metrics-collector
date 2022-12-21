@@ -2,7 +2,7 @@
 //modules
 var uaParser = require("ua-parser-js")
 var path = require("path");
-var fs = require("fs");
+var fs = require("fs").promises;
 var util = require("util");
 const readFileAsync = util.promisify(fs.readFile);
 
@@ -67,12 +67,13 @@ var wrapper = function (config){
                             _id: newId,
                             conf: formated_data.conf,
                             uid: formated_data.uid,
-                            m: [{br: uaParser(req.headers["user-agent"]).browser.name + " " + uaParser(req.headers["user-agent"]).browser.major, 
-                            os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version,
-                            pid: formated_data.m.pid,
-                            ts: formated_data.m.ts,
-                            t: {rip: ip2int(req.ip)} }, //Add the request IP address in the first metrics element
-                            ]
+                            m: [{
+                                ts: formated_data.m.ts,
+                                br: uaParser(req.headers["user-agent"]).browser.name + " " + uaParser(req.headers["user-agent"]).browser.major, 
+                                os: uaParser(req.headers["user-agent"]).os.name + " " +uaParser(req.headers["user-agent"]).os.version,
+                                pid: formated_data.m.pid,
+                                t: {rip: ip2int(req.ip)} // Add the request IP address in the first metrics element
+                            }]
                         });
                         //the cookie is signed with a secret
                         res.cookie('jmmc_objectId', newId, {secure: true, signed: true, httpOnly: true, sameSite: 'None'});
@@ -98,10 +99,10 @@ var wrapper = function (config){
                 return res.status(500).send("something bad happened");
             }
         }else if( req.url === "/getClient" && req.method === 'GET'){
-            let index = await readFileAsync(path.join(__dirname, 'public/jmmc_client.js'), 'utf8');
-            index = index.replace('JMMC_PUSH_URL', config.pushURL); //MODIFY JMMC_PUSH_URL
-            res.set('Content-Type', 'application/javascript')
-            return res.send(index);
+            let jmmc_client_content = await fs.readFile(path.join(__dirname, 'public/jmmc_client.js'), "utf8");
+            jmmc_client_content = jmmc_client_content.replace('JMMC_PUSH_URL', config.pushURL); //Replace JMMC_PUSH_URL with the push url
+            //res.set('Content-Type', 'application/javascript')
+            return res.set('Content-Type', 'application/javascript').send(jmmc_client_content);
         }else{
             return res.status(400).send({error:"Bad URL or request method."});
         }

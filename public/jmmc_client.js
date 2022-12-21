@@ -1,4 +1,3 @@
-
 let staticId = localStorage.getItem("jmmc_staticUserId"); 
 const url = "JMMC_PUSH_URL"; //this value is generated dynamically
 const events = [
@@ -11,8 +10,6 @@ const jitsi_meet_infos = {
 }
 
 let id = APP.conference.getMyUserId();
-
-
 
 class jitsi_meet_data {
     constructor() {
@@ -38,7 +35,6 @@ class jitsi_meet_data {
         this.j_t_tp = "tcp";       // transport type
         this.j_t_lip = "0.0.0.0"; // transport local_ip
         this.j_t_lp = "0";          // transport local_port
-        this.j_t_rip = "0.0.0.0";   // real ip
 
         this.j_res = {};
         this.j_cdc = {};
@@ -332,11 +328,6 @@ const format_data = (data) => {
     if(formated_data.hasOwnProperty('t') && formated_data.t.lip){
         formated_data.t.lip = ip2int(formated_data.t.lip);
     }
-
-    if(formated_data.hasOwnProperty('t') && formated_data.t.rip){
-        formated_data.t.rip = ip2int(formated_data.t.rip);
-    }
-
     
     return {uid: data.uid, conf: data.conf, m: formated_data};
 }
