@@ -2,10 +2,7 @@
 //modules
 var uaParser = require("ua-parser-js")
 var path = require("path");
-var fs = require("fs").promises;
-var util = require("util");
-const readFileAsync = util.promisify(fs.readFile);
-
+var fs = require("fs");
 
 var validator = require("./validator/schema_validator");
 var jmmcModel_initializer = require("./schema/jmmcModel_intializer");
@@ -61,6 +58,7 @@ var wrapper = function (config){
 
                     // tests for the existence of the br variable. If true it means new sessions
                     if(formated_data.m.br){
+                        // formated_data.m.ts = Math.floor(Date.now() / 1000);
                         var newId = config.mongoose.Types.ObjectId();
                         await jmmcModel.create({
                             _id: newId,
@@ -98,9 +96,15 @@ var wrapper = function (config){
                 return res.status(500).send("something bad happened");
             }
         }else if( req.url === "/getClient" && req.method === 'GET'){
-            let jmmc_client_content = await fs.readFile(path.join(__dirname, 'public/jmmc_client.js'), "utf8");
-            jmmc_client_content = jmmc_client_content.replace('JMMC_PUSH_URL', config.pushURL); //Replace JMMC_PUSH_URL with the push url
-            return res.set('Content-Type', 'application/javascript').send(jmmc_client_content);
+            fs.readFile(path.join(__dirname, 'public/jmmc_client.js'), "utf8", (err, jmmc_client_content) => {
+                if(err){
+                    return res.status(500);
+                }
+                else{
+                    jmmc_client_content = jmmc_client_content.replace('JMMC_PUSH_URL', config.pushURL); //Replace JMMC_PUSH_URL with the push url
+                    return res.set('Content-Type', 'application/javascript').send(jmmc_client_content);
+                }
+             });
         }else{
             return res.status(400).send({error:"Bad URL or request method."});
         }

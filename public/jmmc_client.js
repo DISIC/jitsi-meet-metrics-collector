@@ -253,15 +253,6 @@ function updateStats(stats) {
         jitsi_meet_buffer.updateStr(  transport.localip.split(":")[1]  , "j_t_lp");
     }
 
-    // if (stats.resolution && Object.keys(stats.resolution).length > 0) {
-    //     Object.entries(stats.resolution).forEach(([video_uid, value]) => {
-
-    //         let video_data = value[Object.keys(value)[0]];
-
-    //         jitsi_meet_buffer.updateVideo(video_uid, video_data["width"], "w")
-    //         jitsi_meet_buffer.updateVideo(video_uid, video_data["height"], "h")
-    //     })
-    // }
     if (stats.framerate && Object.keys(stats.framerate).length > 0) {
         Object.entries(stats.framerate).forEach(([video_uid, value]) => {
 
