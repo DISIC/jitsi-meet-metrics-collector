@@ -332,6 +332,7 @@ function pushStats() {
         update.conf = jitsi_meet_infos.conf;
         fetch(url, {
             headers: {'Content-Type': 'application/json'},
+            credentials: 'include',
             method: 'POST',
             body: JSON.stringify(format_data(update))
         })
