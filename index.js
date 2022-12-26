@@ -10,7 +10,7 @@ var jmmcModel_initializer = require("./schema/jmmcModel_intializer");
 function ip2int(ip) {
     return ip.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0;
 }
-//test
+
 //wrapper is function that returns the route object configured with the passed params
 var wrapper = function (config){
 
