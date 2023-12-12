@@ -9,6 +9,7 @@ export class MetricsCollectorService {
   constructor(@InjectModel(Metric.name) private metricModel: Model<Metric>) {}
 
   async create(body: MetricDTO): Promise<Metric> {
+    body.m['ts'] = Math.floor(Date.now() / 1000);
     const metric = new this.metricModel(body);
     return metric.save();
   }
