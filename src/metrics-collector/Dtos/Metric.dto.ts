@@ -1,31 +1,20 @@
+import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
+import { Type } from 'class-transformer';
+import { applyDecorators } from '@nestjs/common';
 import {
   IsIn,
+  IsNotEmptyObject,
   IsNumber,
   IsObject,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
+  Min,
+  ValidateNested,
 } from 'class-validator';
-
-@Injectable()
-export class MetricDTO {
-  @IsString()
-  //@Matches('/ede/')
-  conf: string;
-
-  @IsUUID()
-  @IsOptional()
-  uid: string;
-
-  @IsObject()
-  m: {
-    u: U;
-    d: D;
-    t: T;
-  };
-}
 
 class U {
   // upload bandwidth
@@ -65,8 +54,8 @@ class D {
   pl: number;
 }
 
-class T {
-  // transport ip
+@Injectable()
+export class T {
   @IsNumber()
   @IsOptional()
   ip: number;
@@ -77,6 +66,7 @@ class T {
   // transport type
   @IsString()
   @IsIn(['tcp', 'udp'])
+  @IsOptional()
   tp: string;
   // transport local_ip
   @IsNumber()
@@ -92,6 +82,64 @@ class T {
   lp: number;
   // server_region
   @IsString()
-  @IsIn([])
+  @IsOptional()
   sr: string;
+}
+class Metric {
+  @IsString()
+  @IsOptional()
+  br: string;
+
+  @IsString()
+  @IsOptional()
+  os: string;
+
+  @IsString()
+  pid: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  @Max(100)
+  cq: number;
+
+  @IsOptional()
+  res: {};
+
+  @IsOptional()
+  cdc: {};
+
+  @ValidateNested()
+  @Type(() => U)
+  u: U;
+
+  @ValidateNested()
+  @Type(() => D)
+  d: D;
+
+  @ValidateNested()
+  @Type(() => T)
+  t: T;
+
+  @IsNumber()
+  @IsOptional()
+  ts: number;
+}
+@Injectable()
+export class MetricDTO {
+  v = process.env.JMMC_AUTHORIZEDREGIONS.split(' ');
+
+  @IsString()
+  //@Matches('/ede/')
+  conf: string;
+
+  @IsUUID()
+  @IsOptional()
+  uid: string;
+
+  @IsObject()
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => Metric)
+  m: Metric;
 }
