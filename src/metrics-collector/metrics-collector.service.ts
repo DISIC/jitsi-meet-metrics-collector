@@ -95,12 +95,12 @@ export class MetricsCollectorService {
         ],
       });
       //the cookie is signed with a secret
-      res.cookie('jmmc_objectId', newId, {
-        secure: true,
-        signed: true,
-        httpOnly: true,
-        sameSite: 'none',
-      });
+      // res.cookie('jmmc_objectId', newId, {
+      //   secure: true,
+      //   signed: true,
+      //   httpOnly: true,
+      //   sameSite: 'none',
+      // });
       return metric.save();
     } else {
       if (req.signedCookies['jmmc_objectId']) {
