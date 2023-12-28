@@ -14,99 +14,111 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+class U {
+  // upload bandwidth
+  @IsNumber()
+  @IsOptional()
+  bw: number;
+  // upload audio_bitrate
+  @IsNumber()
+  @IsOptional()
+  ab: number;
+  // upload video_bitrate
+  @IsNumber()
+  @IsOptional()
+  vb: number;
+  // upload packet_loss
+  @IsNumber()
+  @IsOptional()
+  pl: number;
+}
+
+class D {
+  // upload bandwidth
+  @IsNumber()
+  @IsOptional()
+  bw: number;
+  // upload audio_bitrate
+  @IsNumber()
+  @IsOptional()
+  ab: number;
+  // upload video_bitrate
+  @IsNumber()
+  @IsOptional()
+  vb: number;
+  // upload packet_loss
+  @IsNumber()
+  @IsOptional()
+  pl: number;
+}
+
+@Injectable()
+export class T {
+  @IsNumber()
+  @IsOptional()
+  ip: number;
+  // transport port
+  @IsNumber()
+  @IsOptional()
+  p: number;
+  // transport type
+  @IsString()
+  @IsIn(['tcp', 'udp'])
+  @IsOptional()
+  tp: string;
+  // transport local_ip
+  @IsNumber()
+  @IsOptional()
+  lip: number;
+  // transport real_ip
+  @IsNumber()
+  @IsOptional()
+  rip: number;
+  // transport local_port
+  @IsNumber()
+  @IsOptional()
+  lp: number;
+  // server_region
+  @IsString()
+  @IsOptional()
+  sr: string;
+}
 class Metric {
   @IsString()
   @IsOptional()
-  j_br: string;
+  br: string;
 
   @IsString()
   @IsOptional()
-  j_os: string;
+  os: string;
 
   @IsString()
   @IsOptional()
-  j_pid: string;
+  pid: string;
 
   @IsNumber()
   @IsOptional()
   @Min(0)
   @Max(100)
-  j_cq: number;
+  cq: number;
 
   @IsOptional()
-  j_res_h: number;
+  res: {};
 
   @IsOptional()
-  j_res_w: number;
+  cdc: {};
 
-  @IsOptional()
-  j_cdc_a: number;
+  @ValidateNested()
+  @Type(() => U)
+  u: U;
 
-  @IsOptional()
-  j_cdc_v: number;
+  @ValidateNested()
+  @Type(() => D)
+  d: D;
 
-  // upload bandwidth
-  @IsNumber()
-  @IsOptional()
-  j_u_bw: number;
-  // upload audio_bitrate
-  @IsNumber()
-  @IsOptional()
-  j_u_ab: number;
-  // upload video_bitrate
-  @IsNumber()
-  @IsOptional()
-  j_u_vb: number;
-  // upload packet_loss
-  @IsNumber()
-  @IsOptional()
-  j_u_pl: number;
-
-  // upload bandwidth
-  @IsNumber()
-  @IsOptional()
-  j_d_bw: number;
-  // upload audio_bitrate
-  @IsNumber()
-  @IsOptional()
-  j_d_ab: number;
-  // upload video_bitrate
-  @IsNumber()
-  @IsOptional()
-  j_d_vb: number;
-  // upload packet_loss
-  @IsNumber()
-  @IsOptional()
-  j_d_pl: number;
-
-  @IsString()
-  @IsOptional()
-  j_t_ip: string;
-  // transport port
-  @IsString()
-  @IsOptional()
-  j_t_p: string;
-  // transport type
-  @IsString()
-  @IsIn(['tcp', 'udp'])
-  @IsOptional()
-  j_t_tp: string;
-  // transport local_ip
-  @IsString()
-  @IsOptional()
-  j_t_lip: string;
-  // transport real_ip
-  @IsNumber()
-  @IsOptional()
-  j_t_rip: number;
-  // transport local_port
-  @IsString()
-  @IsOptional()
-  j_t_lp: string;
-  // server_region
-  @IsString()
-  @IsOptional()
-  j_t_sr: string;
+  @ValidateNested()
+  @Type(() => T)
+  t: T;
 
   @IsNumber()
   @IsOptional()

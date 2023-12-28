@@ -7,8 +7,8 @@ import { MetricDTO } from './Dtos/Metric.dto';
 import mongoose from 'mongoose';
 import * as uaParser from 'ua-parser-js';
 import { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class MetricsCollectorService {
@@ -27,7 +27,7 @@ export class MetricsCollectorService {
 
   sendFile(res: Response) {
     fs.readFile(
-      path.join(__dirname, 'public/jmmc_client.js'),
+      path.join(__dirname, '../../public/jmmc_client.js'),
       'utf8',
       (err, jmmc_client_content) => {
         if (err) {
@@ -37,9 +37,11 @@ export class MetricsCollectorService {
             'JMMC_PUSH_URL',
             '/jitsi-meet-metrics-collector/push',
           ); //Replace JMMC_PUSH_URL with the push url
-          return res
-            .set('Content-Type', 'application/javascript')
-            .send(jmmc_client_content);
+          return (
+            res
+              // .set('Content-Type', 'application/javascript')
+              .send(jmmc_client_content)
+          );
         }
       },
     );
@@ -51,11 +53,11 @@ export class MetricsCollectorService {
 
     //validating sr property
     if (
-      body.m.t.sr &&
+      body.m.j_t_sr &&
       !this.configService
         .get('JMMC_AUTHORIZEDREGIONS')
         .split(' ')
-        .includes(body.m.t.sr)
+        .includes(body.m.j_t_sr)
     ) {
       throw new BadRequestException(
         `m.t.sr must be one of the following values: ${this.configService
@@ -65,13 +67,13 @@ export class MetricsCollectorService {
     }
 
     //deleting empty objects inside m
-    ['u', 'd', 't'].forEach((i) => {
-      if (body.m.hasOwnProperty(i) && Object.keys(body.m[i]).length === 0) {
+    Object.keys(body.m).forEach((i) => {
+      if (body.m[i] === null) {
         delete body.m[i];
       }
     });
 
-    if (body.m.br) {
+    if (body.m.j_br) {
       // body.m.ts = Math.floor(Date.now() / 1000);
       var newId = new mongoose.Types.ObjectId();
       const metric = await new this.metricModel({
@@ -89,26 +91,28 @@ export class MetricsCollectorService {
               uaParser(req.headers['user-agent']).os.name +
               ' ' +
               uaParser(req.headers['user-agent']).os.version,
-            pid: body.m.pid,
-            t: { rip: this.ip2int(req.ip) }, // Add the request IP address in the first metrics element
+            pid: body.m.j_pid,
+            j_rip: this.ip2int(req.ip), // Add the request IP address in the first metrics element
           },
         ],
       });
       //the cookie is signed with a secret
-      // res.cookie('jmmc_objectId', newId, {
-      //   secure: true,
-      //   signed: true,
-      //   httpOnly: true,
-      //   sameSite: 'none',
-      // });
+      res.cookie('jmmc_objectId', newId, {
+        secure: true,
+        signed: true,
+        httpOnly: true,
+        sameSite: 'none',
+      });
       return metric.save();
     } else {
       if (req.signedCookies['jmmc_objectId']) {
-        await this.metricModel.updateOne(
-          { _id: req.signedCookies['jmmc_objectId'] },
-          { $push: { m: body.m } },
-        );
-        return '200';
+        if (Object.values(body.m).length > 1) {
+          await this.metricModel.updateOne(
+            { _id: req.signedCookies['jmmc_objectId'] },
+            { $push: { m: body.m } },
+          );
+          return '200';
+        }
       } else {
         return 'invalid jmmc_objectId';
       }
