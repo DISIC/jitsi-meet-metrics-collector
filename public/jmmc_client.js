@@ -293,8 +293,8 @@ function updateStats(stats) {
 // format_data is function that format data received from jitsi-meet
 const format_data = (data) => {
   let formated_data = {};
-  formated_data.j_res_h = data.j_res.height;
-  formated_data.j_res_w = data.j_res.width;
+  formated_data.j_res_h = data.j_res ? data.j_res.height : null;
+  formated_data.j_res_w = data.j_res ? data.j_res.width : null;
   formated_data.j_cdc_a = data.j_res.audio;
   formated_data.j_cdc_v = data.j_res.video;
   delete data.j_cdc;
