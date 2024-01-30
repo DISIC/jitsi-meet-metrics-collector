@@ -35,7 +35,7 @@ export class MetricsCollectorService {
         } else {
           jmmc_client_content = jmmc_client_content.replace(
             'JMMC_PUSH_URL',
-            '/jitsi-meet-metrics-collector/push',
+            process.env.JMMC_PUSH_URL,
           ); //Replace JMMC_PUSH_URL with the push url
           return (
             res

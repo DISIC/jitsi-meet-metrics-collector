@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type MetricDocument = HydratedDocument<Metric>;
 
-@Schema()
+@Schema({ collection: process.env.MONGO_COLLECTION_NAME })
 export class Metric {
   @Prop()
   conf: string;

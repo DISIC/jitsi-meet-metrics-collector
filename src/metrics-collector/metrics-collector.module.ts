@@ -7,7 +7,12 @@ import { Metric, MetricSchema } from './schemas/Metric.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Metric.name, schema: MetricSchema }]),
+    MongooseModule.forFeature([
+      {
+        name: Metric.name,
+        schema: MetricSchema,
+      },
+    ]),
     ConfigModule,
   ],
   controllers: [MetricsCollectorController],

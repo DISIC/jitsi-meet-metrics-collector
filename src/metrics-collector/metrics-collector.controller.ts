@@ -1,11 +1,15 @@
+import { ConfigService } from '@nestjs/config';
 import { Body, Controller, Get, Post, Req, Res, Header } from '@nestjs/common';
 import { MetricsCollectorService } from './metrics-collector.service';
 import { MetricDTO } from './Dtos/Metric.dto';
 import { Request, Response } from 'express';
 
-@Controller('jitsi-meet-metrics-collector')
+@Controller('/')
 export class MetricsCollectorController {
-  constructor(private metricCollectorService: MetricsCollectorService) {}
+  constructor(
+    private metricCollectorService: MetricsCollectorService,
+    private configService: ConfigService,
+  ) {}
 
   @Post('/push')
   create(
