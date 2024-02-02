@@ -1,5 +1,15 @@
 import { ConfigService } from '@nestjs/config';
-import { Body, Controller, Get, Post, Req, Res, Header } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  Header,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { MetricsCollectorService } from './metrics-collector.service';
 import { MetricDTO } from './Dtos/Metric.dto';
 import { Request, Response } from 'express';
@@ -24,5 +34,10 @@ export class MetricsCollectorController {
   @Header('Content-Type', 'application/javascript')
   sendFile(@Res() res: Response) {
     return this.metricCollectorService.sendFile(res);
+  }
+
+  @Get('/objectId')
+  exists(@Query('jmmc_id') jmmc_id: string) {
+    return this.metricCollectorService.exists(jmmc_id);
   }
 }

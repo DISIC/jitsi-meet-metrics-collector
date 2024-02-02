@@ -118,4 +118,15 @@ export class MetricsCollectorService {
       }
     }
   }
+
+  exists(jmmc_id: string) {
+    if (jmmc_id.match(/^[0-9a-fA-F]{24}$/)) {
+      // Yes, it's a valid ObjectId, proceed with `findById` call.
+      return this.metricModel.findById(jmmc_id) ? true : false;
+    } else {
+      throw new BadRequestException(
+        "le paramètre jmmc_id n'est pas un objectId valide",
+      );
+    }
+  }
 }
