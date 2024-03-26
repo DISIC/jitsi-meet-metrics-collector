@@ -27,7 +27,7 @@ export class MetricsCollectorService {
 
   sendFile(res: Response) {
     fs.readFile(
-      path.join(__dirname, '../../public/jmmc_client.js'),
+      path.join(process.cwd(), '/public/jmmc_client.js'),
       'utf8',
       (err, jmmc_client_content) => {
         if (err) {
