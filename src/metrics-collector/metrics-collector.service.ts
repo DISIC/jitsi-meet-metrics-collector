@@ -107,9 +107,22 @@ export class MetricsCollectorService {
     } else {
       if (req.signedCookies['jmmc_objectId']) {
         if (Object.values(body.m).length > 1) {
+          const j_t_ip = body.m.j_t_ip && this.ip2int(body.m.j_t_ip);
+          const j_t_lip = body.m.j_t_lip && this.ip2int(body.m.j_t_lip);
+          const j_t_rip = body.m.j_t_rip && this.ip2int(body.m.j_t_rip);
+          let metrics: {} = body.m;
+          if (j_t_ip) {
+            metrics = { ...metrics, j_t_ip };
+          }
+          if (j_t_lip) {
+            metrics = { ...metrics, j_t_lip };
+          }
+          if (j_t_rip) {
+            metrics = { ...metrics, j_t_rip };
+          }
           await this.metricModel.updateOne(
             { _id: req.signedCookies['jmmc_objectId'] },
-            { $push: { m: body.m } },
+            { $push: { m: { ...metrics } } },
           );
           return '200';
         }
