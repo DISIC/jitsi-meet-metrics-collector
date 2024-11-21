@@ -25,7 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     // TypeOrmModule.forRoot({
     //   type: 'postgres',
     //   host: 'localhost',
-    //   port: 5432,
+    //   port: 5432
     //   username: 'youssefelmkhantar',
     //   password: 'youssef',
     //   database: 'typeorm',
