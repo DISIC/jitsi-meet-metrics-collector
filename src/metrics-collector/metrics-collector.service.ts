@@ -98,6 +98,7 @@ export class MetricsCollectorService {
       });
       //the cookie is signed with a secret
       res.cookie('jmmc_objectId', newId, {
+        domain: process.env.COOKIE_DOMAIN,
         secure: true,
         signed: true,
         httpOnly: true,
